@@ -14,6 +14,7 @@ interface FlowUpdate {
   routing?: any;
   processing?: string;
   complete?: boolean;
+  stepData?: any;
 }
 
 export function useOrchestrator() {
@@ -47,7 +48,8 @@ export function useOrchestrator() {
         },
         processing: agents.length > 1 
           ? `Routing to ${agents.length} agents: ${agents.map((a: string) => a.toUpperCase()).join(', ')}...`
-          : `Routing to ${primaryAgent.toUpperCase()}...`
+          : `Routing to ${primaryAgent.toUpperCase()}...`,
+        stepData: { agents, primaryAgent, confidence: routing.confidence }
       });
 
       // If out of scope, return early
@@ -70,7 +72,8 @@ export function useOrchestrator() {
         onFlowUpdate?.({ 
           currentStep: 'agents',
           routing,
-          processing: `Consultando ${agents.length} agentes en paralelo...` 
+          processing: `Consultando ${agents.length} agentes en paralelo...`,
+          stepData: { agentCount: agents.length, agents }
         });
         
         const agentPromises = agents.map(async (agent: string) => {
@@ -109,7 +112,8 @@ export function useOrchestrator() {
         onFlowUpdate?.({ 
           currentStep: singleAgent,
           routing,
-          processing: 'Consultando regulaciones...' 
+          processing: 'Consultando regulaciones...',
+          stepData: { agent: singleAgent }
         });
 
         const agentResponse = await axios.post(
@@ -127,7 +131,8 @@ export function useOrchestrator() {
       onFlowUpdate?.({ 
         currentStep: 'auditor',
         routing,
-        processing: agents.length > 1 ? 'Integrando respuestas...' : 'Validando respuesta...' 
+        processing: agents.length > 1 ? 'Integrando respuestas...' : 'Validando respuesta...',
+        stepData: { isMultiAgent: agents.length > 1, agentCount: agents.length }
       });
 
       let auditResponse;
@@ -168,7 +173,8 @@ export function useOrchestrator() {
       onFlowUpdate?.({ 
         currentStep: 'complete',
         routing,
-        complete: true 
+        complete: true,
+        stepData: { finished: true }
       });
 
       // Calculate total cost

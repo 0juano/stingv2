@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "frontend/src/components/TerminalV2.tsx",
     "agents/bcra/cost_calculator.py",
     "agents/auditor/cost_calculator.py",
     "agents/senasa/cost_calculator.py",
@@ -191,7 +192,6 @@
     "test_adversarial.py",
     "routing_test_results_20250702_200743.json",
     "routing_test_results_20250702_200152.json",
-    "frontend/dist/index.html",
     "frontend/dist/vite.svg",
     "frontend/node_modules/lightningcss/README.md",
     "frontend/node_modules/@tailwindcss/postcss/README.md",

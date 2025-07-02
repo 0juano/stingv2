@@ -18,9 +18,11 @@ interface FlowProps {
 const styles = {
   container: {
     border: '2px solid #444',
-    backgroundColor: '#2a2a2a',
-    padding: '1.5rem',
+    backgroundColor: '#1b1b1b',
+    padding: '2rem',
     fontFamily: '"Source Code Pro", monospace',
+    maxWidth: '800px',
+    margin: '0 auto',
   },
   agentBox: {
     border: '2px solid #444',
