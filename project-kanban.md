@@ -1,20 +1,15 @@
 ---
 
-kanban-plugin: basic
+kanban-plugin: board
 
 ---
 
 ## 📋 Backlog
 
-- [ ] Build React frontend with chat interface
 - [ ] Implement real-time streaming responses
 - [ ] Add conversation history
-- [ ] Create loading states and error handling
-- [ ] Implement React-Flow for query routing visualization
-- [ ] Show agent selection reasoning
-- [ ] Display cost per query
+- [ ] Show agent selection reasoning in UI
 - [ ] Add response confidence indicators
-- [ ] Multi-agent queries (route to multiple agents)
 - [ ] Response caching for common queries
 - [ ] Query suggestions/autocomplete
 - [ ] Export chat history
@@ -27,26 +22,22 @@ kanban-plugin: basic
 - [ ] Security audit
 - [ ] Load testing
 
+
 ## 🚧 In Progress
 
-- [ ] **Fix BCRA routing issues** 🔥
-  - Q106, Q111, Q115 incorrectly routed to Comex
-  - Q113 marked as out_of_scope
-  - Q112 returns uppercase "BCRA"
-- [ ] **Improve router prompt** 🔥
-  - BCRA: Currency, payments, MULC, SIRA, financial regulations
-  - Comex: Import/export procedures, tariffs, customs
-  - When both apply: Financial → BCRA, Trade → Comex
+- [ ] Test multi-agent implementation with 230 questions
 - [ ] Create full test suite (test_suite.py)
 - [ ] Build performance analysis dashboard
 - [ ] Create cost tracking report
 - [ ] Test error handling and timeout scenarios
 
+
 ## 🧪 Testing/Review
 
-- [ ] Run full test suite on all 30 questions
-- [ ] Verify routing accuracy improvements (target >90%)
-- [ ] Performance benchmarking
+- [ ] Run full test suite on all 230 questions
+- [ ] Verify multi-agent routing works correctly
+- [ ] Performance benchmarking of parallel agent calls
+
 
 ## ✅ Done
 
@@ -65,13 +56,26 @@ kanban-plugin: basic
 - [x] Create test_questions.json with 30 test cases
 - [x] Build test_routing.py for routing accuracy testing
 - [x] Run initial routing test (83.3% accuracy)
+- [x] **Fix BCRA routing issues** (96.7% accuracy) 🎉
+- [x] **Improve router prompt** 🎉
+- [x] Create routing visualization HTML report
+- [x] Test with 230 questions dataset
+- [x] **Build React frontend with chat interface** 🎉
+- [x] Create terminal-style UI with ASCII flow
+- [x] **Multi-agent queries** (parallel processing) 🎉
+- [x] Update router for multi-agent detection
+- [x] Create orchestrator_multiagent.py
+- [x] Modify auditor to merge multi-agent responses
+- [x] Display which agents were consulted
+
 
 ## 🐛 Known Issues
 
 - [ ] **BCRA Agent Timeout** - Netflix payment queries
 - [ ] **Router Case Sensitivity** - Returns "BCRA" not "bcra"
-- [ ] **Missing Multi-Agent Support** - Single agent only
+- [x] ~~**Missing Multi-Agent Support** - Single agent only~~ ✅ FIXED
 - [ ] **No Error Recovery** - Cascading failures
+
 
 ## 💡 Ideas
 
@@ -82,9 +86,43 @@ kanban-plugin: basic
 - [ ] Spanish/English language detection
 - [ ] Create "learning mode" for regulations
 
+## ⁉️ Questions
+
+- [x] Are all the agents comparmentalized in their own component? If we want to change the prompt or something of a single agent is it easy? Are we following best practices in the way we develop the agents?
+
+### ✅ Answer:
+Yes! The agents are well compartmentalized:
+
+1. **Separate Docker containers**: Each agent (BCRA, Comex, Senasa) runs in its own container
+2. **Independent codebases**: Each agent has its own folder under `/agents/` with:
+   - `main.py` - The FastAPI service
+   - `prompt.md` - The agent's specific prompt (easy to modify!)
+   - `Dockerfile` - Container configuration
+   - `requirements.txt` - Dependencies
+
+3. **Best practices followed**:
+   - ✅ Microservices architecture
+   - ✅ Clean separation of concerns
+   - ✅ Easy to modify prompts without affecting code
+   - ✅ Independent scaling possible
+   - ✅ Fault isolation (one agent failure doesn't affect others)
+
+To change an agent's prompt:
+```bash
+# Edit the prompt
+vim agents/bcra/prompt.md
+
+# Rebuild and restart just that agent
+docker-compose build bcra
+docker-compose up -d bcra
+```
+
+
+
+
 
 %% kanban:settings
 ```
-{"kanban-plugin":"basic","new-card-insertion-method":"prepend-compact","show-checkboxes":true,"archive-with-date":false}
+{"kanban-plugin":"board","new-card-insertion-method":"prepend-compact","show-checkboxes":true,"archive-with-date":false,"list-collapse":[false,null,null,null,null,null]}
 ```
 %%

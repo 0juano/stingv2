@@ -1,4 +1,4 @@
-"""Router service - routes queries to appropriate agents with multi-agent support"""
+"""Router service - routes queries to appropriate agents"""
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,7 +6,7 @@ import httpx
 import os
 import json
 import yaml
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -26,9 +26,7 @@ class RouteRequest(BaseModel):
     question: str
 
 class RouteDecision(BaseModel):
-    agents: List[str] = []  # Now supports multiple agents
-    primary_agent: str = ""
-    agent: Optional[str] = None  # For backward compatibility
+    agent: str
     reason: str
     confidence: float = 0.0
 
@@ -60,7 +58,7 @@ async def health():
 
 @app.post("/route", response_model=RouteResponse)
 async def route(request: RouteRequest):
-    """Route query to appropriate agent(s)"""
+    """Route query to appropriate agent"""
     api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
         raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY not configured")
@@ -77,7 +75,7 @@ async def route(request: RouteRequest):
         # Fallback prompt if file not found
         base_prompt = """You are a routing agent for Argentine regulations.
 Available agents: bcra, comex, senasa.
-Route to ALL relevant agents."""
+Route to the most appropriate agent."""
     
     # Agent bias adjustment (can be configured via env vars)
     agent_biases = {
@@ -120,24 +118,9 @@ Route to ALL relevant agents."""
             
             # Parse routing decision
             decision_data = json.loads(result["choices"][0]["message"]["content"])
-            
-            # Handle both old and new formats for backward compatibility
-            if "agent" in decision_data and "agents" not in decision_data:
-                # Old format - convert to new
-                agent = decision_data["agent"].lower()
-                decision_data = {
-                    "agents": [agent] if agent != "out_of_scope" else [],
-                    "primary_agent": agent,
-                    "reason": decision_data.get("reason", ""),
-                    "confidence": decision_data.get("confidence", 0.8)
-                }
-            
-            # Ensure all agent names are lowercase
-            if "agents" in decision_data:
-                decision_data["agents"] = [a.lower() for a in decision_data["agents"]]
-            if "primary_agent" in decision_data:
-                decision_data["primary_agent"] = decision_data["primary_agent"].lower()
-            
+            # Ensure agent name is lowercase
+            if "agent" in decision_data:
+                decision_data["agent"] = decision_data["agent"].lower()
             decision = RouteDecision(**decision_data)
             
             return RouteResponse(
@@ -151,8 +134,7 @@ Route to ALL relevant agents."""
         # Default to out_of_scope on error
         return RouteResponse(
             decision=RouteDecision(
-                agents=[],
-                primary_agent="out_of_scope",
+                agent="out_of_scope",
                 reason="Error al procesar la consulta",
                 confidence=0.0
             ),

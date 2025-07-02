@@ -1,0 +1,1495 @@
+{
+  "summary": {
+    "total": 130,
+    "correct": 130,
+    "accuracy": 1.0,
+    "timestamp": "20250702_200743"
+  },
+  "details": [
+    {
+      "code": 101,
+      "question": "¿Qué pasos debo seguir para exportar miel orgánica a Canadá, desde la obtención ...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 102,
+      "question": "Para enviar frutillas frescas a Estados Unidos, ¿cuáles son los requisitos fitos...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 103,
+      "question": "Al exportar alimento balanceado para mascotas a Uruguay, ¿qué permisos otorga Se...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 104,
+      "question": "Si quiero vender carne bovina congelada a China, ¿qué certificado HGP free exige...",
+      "expected_agents": [
+        "comex",
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 105,
+      "question": "Importaré una línea de envasado usada financiada por el proveedor exterior; ¿cóm...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 106,
+      "question": "Para importar vacunas antiaftosa, ¿qué autorización sanitaria necesito y bajo qu...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 107,
+      "question": "¿Qué barreras arancelarias y sanitarias enfrenta el envío de semillas de chía a ...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 108,
+      "question": "Quiero exportar queso procesado a Brasil; ¿qué inspección realiza Senasa y qué d...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 109,
+      "question": "Al prefinanciar exportaciones de trigo con un banco del exterior, ¿qué tasa de i...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 110,
+      "question": "¿Qué normativa debo cumplir para enviar snacks de soja texturizada a México, inc...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 111,
+      "question": "¿Cuál es el saldo disponible de la cuota SIRA para pagar importaciones de insumo...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 112,
+      "question": "Explicá los requisitos para acceder al dólar CCL cuando una empresa posee deuda ...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 113,
+      "question": "¿Cómo se computa actualmente el límite de posición tomada en futuros dólar ROFEX...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 114,
+      "question": "Detallá la metodología de cálculo de reservas brutas difundida en el Informe Mon...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 115,
+      "question": "¿Qué plazo rige para la liquidación de divisas de exportaciones de servicios inf...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 116,
+      "question": "Indicá los límites máximos de residuos de pesticidas para arándanos frescos dest...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 117,
+      "question": "¿Cuáles son los pasos para registrar un establecimiento avícola como libre de in...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 118,
+      "question": "Listá los requisitos de rotulado para miel a granel exportada a Japón vigentes e...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 119,
+      "question": "¿Qué procedimiento de trazabilidad exige Senasa para carne ovina patagónica con ...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 120,
+      "question": "¿Cuánto demora la evaluación de un nuevo ingrediente activo de fitosanitario cat...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 121,
+      "question": "¿Se permite la importación de cannabis medicinal con fines de investigación y qu...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 122,
+      "question": "Detallá el protocolo de contingencia ante un brote de fiebre porcina africana en...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 123,
+      "question": "Calculá los derechos de exportación de biodiésel HS 3826.00 al tipo de cambio ex...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 124,
+      "question": "¿Qué plazo de embarque otorga la DJVE para maíz tardío 2025 y cómo se solicita p...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 125,
+      "question": "¿Cuáles son los topes de valor FOB que activan alerta temprana de subfacturación...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 126,
+      "question": "Describí el régimen de importación temporaria para moldes plásticos y su plazo d...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 127,
+      "question": "¿Qué beneficios otorga la Ley de Economía del Conocimiento al exportar servicios...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 128,
+      "question": "Listá los documentos mínimos para despachar a plaza maquinaria usada con arancel...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 129,
+      "question": "¿Cómo se obtiene la clasificación SIMI A para repuestos aeronáuticos?",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 130,
+      "question": "Explicá el procedimiento de cálculo del reintegro para exportaciones de producto...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 201,
+      "question": "¿Cuál es el plazo máximo para oficializar una destinación de importación a consu...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 202,
+      "question": "Calculá los derechos antidumping aplicables a la importación de bicicletas origi...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 203,
+      "question": "¿Qué requisitos documentales exige Aduana para ingresar mercancías bajo el Régim...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 204,
+      "question": "Detallá el procedimiento para obtener un certificado de origen digital para expo...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 205,
+      "question": "¿Cómo se calcula el reintegro a la exportación de vino fraccionado en botellas d...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 206,
+      "question": "¿Qué topes de peso y valor definen una Exporta Simple y qué beneficios otorga?",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 207,
+      "question": "Listá los pasos para tramitar una habilitación de zona franca para almacenar pro...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 208,
+      "question": "¿Cuál es la alícuota de IVA adicional para la importación de electrónica de cons...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 209,
+      "question": "Explicá la diferencia entre la destinación suspensiva de tránsito terrestre y el...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 210,
+      "question": "¿Qué régimen permite importar bienes de capital con arancel cero y cuáles son su...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 211,
+      "question": "¿Qué laboratorio oficial realiza la prueba Elisa para detectar brucelosis bovina...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 212,
+      "question": "Enumerá los límites máximos de residuos de clorpirifos en soja destinados a la U...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 213,
+      "question": "Indicá los pasos para habilitar un frigorífico ovino patagónico para exportar a ...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 214,
+      "question": "¿Qué documentación exige Senasa para registrar un nuevo aditivo alimentario en p...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 215,
+      "question": "Listá las plagas cuarentenarias que afectan los envíos de arándanos a Estados Un...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 216,
+      "question": "¿Cuál es el protocolo para declarar un foco de langosta sudamericana y qué medid...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 217,
+      "question": "¿Se puede importar heno de alfalfa desde Uruguay y qué tratamiento fitosanitario...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 218,
+      "question": "Detallá el procedimiento para obtener la certificación de libre de aftosa sin va...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 219,
+      "question": "¿Qué requisitos de embalaje y rotulado exige Senasa para exportar pescados conge...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 220,
+      "question": "Explicá el sistema SigSa y cómo se cargan las ODS para lácteos listos para expor...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 221,
+      "question": "¿Cómo se calcula el límite mensual para acceder al mercado de cambios para el pa...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 222,
+      "question": "Detallá los criterios para considerar una exportación como de bajo valor según l...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 223,
+      "question": "¿Qué plazo de liquidación de divisas aplica a la exportación de software con fac...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 224,
+      "question": "¿Cuál es la posición global neta en moneda extranjera que pueden mantener los ba...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 225,
+      "question": "Listá los requisitos para acceder a la prefinanciación de exportaciones con gara...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 226,
+      "question": "¿Qué condiciones debe cumplir una PyME para girar utilidades a su casa matriz se...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 227,
+      "question": "Explicá el esquema de Pago de Importaciones de bienes de capital a 180 días y su...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 228,
+      "question": "¿Cuál es la tasa de referencia para créditos en dólares a exportadores menores a...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 229,
+      "question": "¿Qué límites rigen para la realización de operaciones de dólar MEP con valores n...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 230,
+      "question": "¿Cómo se informan los pasivos externos financieros en el Relevamiento de Activos...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 231,
+      "question": "Para exportar maní blancheado a la Unión Europea, ¿qué certificado sanitario emi...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 232,
+      "question": "¿Qué barreras sanitarias y arancelarias enfrenta la exportación de aceite de can...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 233,
+      "question": "Al enviar peras frescas a Rusia, ¿qué control de residuos exige Senasa y qué der...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 234,
+      "question": "Quiero exportar cerveza artesanal con frutas a Paraguay; ¿qué análisis bromatoló...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 235,
+      "question": "¿Qué trámite necesito para exportar harina de pescado a Chile y qué reintegro co...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 236,
+      "question": "Para vender leche en polvo instantánea a Egipto, describí el certificado halal q...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 237,
+      "question": "Al exportar mandarinas orgánicas a Estados Unidos, ¿qué tratamiento de frío pide...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 238,
+      "question": "¿Qué MRL de glufosinato acepta Japón en poroto mungo y cómo impacta en la liquid...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 239,
+      "question": "Para exportar subproductos de soja destinados a alimentación animal en Vietnam, ...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 240,
+      "question": "¿Qué requisitos sanitarios y de etiquetado rigen para enviar dulce de leche a la...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 241,
+      "question": "Importaré una planta de energía solar llave en mano; ¿cómo declaro la destinació...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 242,
+      "question": "¿Qué requisitos debe cumplir un importador para acceder al dólar blend en el pag...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 243,
+      "question": "Si se detecta sobrefacturación en la importación de textiles, ¿qué sanciones adu...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 244,
+      "question": "Para financiar la importación de fertilizantes con carta de crédito a 360 días, ...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 245,
+      "question": "Al exportar servicios de consultoría a Chile y cobrar en pesos chilenos, ¿cómo s...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 246,
+      "question": "Para importar antibióticos veterinarios, ¿qué autorización sanitaria debo presen...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 247,
+      "question": "¿Cuál es el procedimiento para importar material genético bovino congelado y baj...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 248,
+      "question": "Al recibir una donación de vacunas para fiebre aftosa, ¿qué exenciones arancelar...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 249,
+      "question": "Para exportar carne aviar refrigerada a Arabia Saudita, describí el certificado ...",
+      "expected_agents": [
+        "comex",
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 250,
+      "question": "Al exportar leche maternizada a Perú con financiamiento anticipado del distribui...",
+      "expected_agents": [
+        "comex",
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 251,
+      "question": "¿Qué documentación se requiere para registrar un contrato de maquila de algodón ...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 252,
+      "question": "Explicá los requisitos para acceder al régimen de importación de bienes usados d...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 253,
+      "question": "¿Cómo se solicita el Certificado de Cupo de azúcar para exportar a Estados Unido...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 254,
+      "question": "¿Qué datos debe contener un packing list para ser válido en una destinación de e...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 255,
+      "question": "Para importar repuestos aeronáuticos con franquicia, ¿qué posición arancelaria y...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 256,
+      "question": "Listá las mercaderías alcanzadas por Licencias No Automáticas en textiles al 202...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 257,
+      "question": "¿Qué sistema informático se usa para registrar un Domicilio Fiscal Electrónico y...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 258,
+      "question": "¿Cuáles son los requisitos para obtener el certificado de exportador habilitado ...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 259,
+      "question": "Detallá el procedimiento de alta como operador logístico OEA y los beneficios de...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 260,
+      "question": "¿Qué controles realiza Aduana sobre el valor FOB declarado en exportaciones tria...",
+      "expected_agents": [
+        "comex"
+      ],
+      "selected_agent": "comex",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 261,
+      "question": "¿Qué métodos oficiales aprueba Senasa para determinar humedad en granos de expor...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 262,
+      "question": "Indicá los requisitos para habilitar un centro de distribución de alimentos bala...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 263,
+      "question": "¿Cómo se registra un nuevo producto biológico veterinario de uso intramamario y ...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 264,
+      "question": "Listá los tratamientos cuarentenarios permitidos para palta Hass destinada a Jap...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 265,
+      "question": "¿Qué pasos debe seguir un apicultor para certificar colmenas libres de varroosis...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 266,
+      "question": "¿Cuáles son las obligaciones de trazabilidad para exportar harina de hueso bovin...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 267,
+      "question": "¿Qué límite de aflatoxinas admite Senasa en maíz para consumo humano nacional?",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 268,
+      "question": "¿Se permite la importación de abejas en paquetes y qué período de cuarentena apl...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 269,
+      "question": "Explicá el protocolo de certificación de campos libres de Bactrocera para export...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 270,
+      "question": "¿Qué escala de evaluación de bienestar animal utiliza Senasa para transporte ter...",
+      "expected_agents": [
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 1.0,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 271,
+      "question": "¿Cuáles son los requisitos de capital mínimo para casas de cambio digitales auto...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 272,
+      "question": "Detallá las operaciones exceptuadas del requisito de conformidad previa para pag...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 273,
+      "question": "¿Qué reservas se excluyen del cálculo de reservas netas según la definición de m...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 274,
+      "question": "¿Cómo se imputan los vencimientos de bonos denominados en dólares ley local en e...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 275,
+      "question": "Explicá la operatoria y los límites del programa 70/30 para importadores de comb...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 276,
+      "question": "¿Qué obligaciones de reporte tienen los bancos sobre derivados OTC en moneda ext...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 277,
+      "question": "¿Cuál es el coeficiente de encaje en pesos para depósitos a la vista de entidade...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 278,
+      "question": "¿Cómo se determina el valor razonable de los títulos públicos en balance bancari...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 279,
+      "question": "Listá las comunicaciones que regulan el acceso de personas humanas al cupo de US...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 280,
+      "question": "¿Qué condiciones exige el BCRA para autorizar la emisión de tarjetas prepagas co...",
+      "expected_agents": [
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 281,
+      "question": "Para exportar aceite de oliva extra virgen a Australia, ¿qué certificado de anál...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 282,
+      "question": "¿Qué tratamiento de fumigación exige India para porotos de soja y cómo se declar...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 283,
+      "question": "Quiero enviar harina de trigo fortificada a Bolivia; ¿qué enriquecimiento obliga...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 284,
+      "question": "¿Qué estudios de OGM debe presentar el exportador para maíz feed a Corea y cómo ...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 285,
+      "question": "Para exportar carne ovina con hueso a la Unión Europea, ¿qué sello sanitario deb...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 286,
+      "question": "¿Qué nivel máximo de residuos de cloruro de benzalconio acepta China en arándano...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 287,
+      "question": "Al exportar langostino patagónico entero a España, ¿qué certificado de captura s...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 288,
+      "question": "¿Cómo obtengo la autorización de exportación de harina de soja a Bielorrusia y q...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 289,
+      "question": "Para vender aceite esencial de limón a Francia, ¿qué límite de furocumarinas con...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 290,
+      "question": "¿Qué restricción sanitaria aplica a la exportación de menudencias porcinas a Sin...",
+      "expected_agents": [
+        "comex",
+        "senasa"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 291,
+      "question": "¿Cómo se presenta un pago anticipado de importación de autopartes amparado por l...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 292,
+      "question": "¿Qué tope de financiamiento externo permite el BCRA para proyectos PPP y cómo se...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.85,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 293,
+      "question": "Al exportar servicios de computación en la nube, ¿qué plazo de ingreso de divisa...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 294,
+      "question": "Para importar notebooks con financiamiento a 120 días, ¿qué tipos de cambio se c...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 295,
+      "question": "Si se devuelve una exportación de calzado por fallas, ¿cómo se registra la nota ...",
+      "expected_agents": [
+        "comex",
+        "bcra"
+      ],
+      "selected_agent": "bcra",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 296,
+      "question": "En la importación de hormonas reproductivas para bovinos, ¿qué plazo de giro rec...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 297,
+      "question": "¿Qué cupo libera el BCRA para la compra de insumos diagnósticos veterinarios crí...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.8,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 298,
+      "question": "Para importar alimento medicado para peces ornamentales, ¿qué control aduanero s...",
+      "expected_agents": [
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 299,
+      "question": "Al exportar yogurt bebible a Chile con cobro en plazo diferido, describí el cert...",
+      "expected_agents": [
+        "comex",
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.9,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    },
+    {
+      "code": 300,
+      "question": "Para expatriar semen bovino congelado a Sudáfrica con anticipo del 50 %, explicá...",
+      "expected_agents": [
+        "comex",
+        "senasa",
+        "bcra"
+      ],
+      "selected_agent": "senasa",
+      "confidence": 0.95,
+      "is_correct": true,
+      "status": "✅ CORRECT"
+    }
+  ]
+}

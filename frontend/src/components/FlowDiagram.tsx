@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 interface FlowProps {
@@ -15,8 +14,6 @@ interface FlowProps {
 }
 
 export default function FlowDiagram({ flow }: FlowProps) {
-  const agents = ['router', 'bcra', 'comex', 'senasa', 'auditor'];
-  
   const getAgentStatus = (agent: string) => {
     if (flow.currentStep === agent) return 'active';
     if (flow.complete && agent === 'auditor') return 'complete';

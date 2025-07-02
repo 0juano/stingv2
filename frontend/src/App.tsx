@@ -1,12 +1,7 @@
-import Terminal from './components/Terminal';
-import './styles/doom64.css';
+import TerminalSimple from './components/TerminalSimple';
 
 function App() {
-  return (
-    <div className="min-h-screen bg-background dark">
-      <Terminal />
-    </div>
-  );
+  return <TerminalSimple />;
 }
 
 export default App

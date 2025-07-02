@@ -10,6 +10,7 @@ interface Message {
   timestamp: Date;
   flow?: any;
   cost?: number;
+  agentsConsulted?: string[];
 }
 
 export default function Terminal() {
@@ -29,7 +30,7 @@ export default function Terminal() {
   ]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentFlow, setCurrentFlow] = useState(null);
+  const [currentFlow, setCurrentFlow] = useState<any>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   const { processQuery } = useOrchestrator();
 
@@ -68,6 +69,7 @@ export default function Terminal() {
         timestamp: new Date(),
         flow: result.flow,
         cost: result.totalCost,
+        agentsConsulted: result.agentsConsulted,
       };
 
       setMessages(prev => [...prev, responseMessage]);
@@ -75,7 +77,7 @@ export default function Terminal() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'system',
-        content: `Error: ${error.message}`,
+        content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -98,18 +100,8 @@ export default function Terminal() {
           </div>
         </div>
 
-        {/* Flow Diagram */}
-        <AnimatePresence>
-          {currentFlow && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <FlowDiagram flow={currentFlow} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Flow Diagram - Always visible */}
+        <FlowDiagram flow={currentFlow || { currentStep: 'idle' }} />
 
         {/* Terminal */}
         <div className="terminal rounded-none">
@@ -130,11 +122,16 @@ export default function Terminal() {
                 {message.type === 'response' && (
                   <div className="space-y-2">
                     <div className="whitespace-pre-wrap">{message.content}</div>
-                    {message.cost !== undefined && (
-                      <div className="text-sm text-muted-foreground">
-                        💰 Cost: ${message.cost.toFixed(4)}
-                      </div>
-                    )}
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      {message.agentsConsulted && message.agentsConsulted.length > 0 && (
+                        <div>
+                          🤝 Agents consulted: {message.agentsConsulted.map(a => a.toUpperCase()).join(', ')}
+                        </div>
+                      )}
+                      {message.cost !== undefined && (
+                        <div>💰 Cost: ${message.cost.toFixed(4)}</div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

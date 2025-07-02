@@ -26,6 +26,11 @@ class AuditRequest(BaseModel):
     agent_response: Dict[str, Any]
     agent_name: str
 
+class MultiAuditRequest(BaseModel):
+    user_question: str
+    agent_responses: Dict[str, Dict[str, Any]]  # agent_name -> response
+    primary_agent: str
+
 class FormattedResponse(BaseModel):
     titulo: str
     respuesta_directa: str
@@ -173,6 +178,135 @@ Responde con JSON:
             cost=0.0
         )
 
+@app.post("/audit-multi", response_model=AuditResponse)
+async def audit_multi(request: MultiAuditRequest):
+    """Audit and merge multiple agent responses"""
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY not configured")
+    
+    # Format agent responses for the prompt
+    agent_responses_text = ""
+    for agent_name, response in request.agent_responses.items():
+        agent_responses_text += f"\n\n**Agente {agent_name.upper()}:**\n"
+        agent_responses_text += json.dumps(response.get("answer", {}), ensure_ascii=False, indent=2)
+    
+    # Create multi-agent audit prompt
+    audit_prompt = f"""Eres el **Auditor y Resumidor Final** del Oráculo Burocrático Argentino.
+
+Tu misión especial: INTEGRAR respuestas de MÚLTIPLES agentes en una respuesta coherente.
+
+Datos recibidos:
+- Pregunta del usuario: {request.user_question}
+- Respuestas de múltiples agentes:{agent_responses_text}
+- Agente principal: {request.primary_agent}
+
+Proceso de Auditoría Multi-Agente:
+1. INTEGRA la información de todos los agentes consultados
+2. PRIORIZA la información del agente principal pero incluye datos relevantes de otros
+3. RESUELVE contradicciones dando prioridad a la fuente más específica
+4. CITA qué agente proporcionó cada información clave
+
+Proceso de Resumen:
+Crea una respuesta UNIFICADA con:
+- Título descriptivo con emoji
+- Respuesta directa que integre todas las perspectivas
+- Detalles clave de CADA agente (indicando la fuente)
+- Toda la normativa citada por los diferentes agentes
+- Próxima acción clara considerando todos los requisitos
+
+IMPORTANTE: En los metadatos, incluye TODOS los agentes consultados.
+
+Responde con JSON:
+{{
+  "status": "Aprobado",
+  "motivo_auditoria": "Respuesta integrada de {len(request.agent_responses)} agentes",
+  "respuesta_final": {{
+    "titulo": "🎯 <Título que refleje la naturaleza multi-agencia>",
+    "respuesta_directa": "✅ <Síntesis de todos los requisitos>",
+    "detalles": [
+      "📌 [SENASA] <requisito sanitario>",
+      "📌 [COMEX] <requisito aduanero>",
+      "📌 [BCRA] <requisito cambiario>",
+      "📌 <otros detalles relevantes con fuente>"
+    ],
+    "normativa_aplicable": [
+      "📋 [SENASA] <norma sanitaria>",
+      "📋 [COMEX] <norma aduanera>",
+      "📋 [BCRA] <comunicación cambiaria>"
+    ],
+    "proxima_accion": "👉 <Acción considerando TODOS los requisitos>",
+    "advertencias": "⚠️ <Advertencias críticas de cualquier agente>"
+  }},
+  "metadata": {{
+    "agentes_consultados": {list(request.agent_responses.keys())},
+    "agente_principal": "{request.primary_agent}",
+    "confianza": 0.95
+  }}
+}}"""
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "HTTP-Referer": "https://github.com/bureaucracy-oracle",
+                    "X-Title": "Bureaucracy Oracle Multi-Auditor"
+                },
+                json={
+                    "model": os.getenv("OPENROUTER_MODEL", "openai/gpt-4o"),
+                    "messages": [
+                        {"role": "system", "content": audit_prompt}
+                    ],
+                    "temperature": 0.1,
+                    "response_format": {"type": "json_object"}
+                },
+                timeout=60.0
+            )
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # Extract cost
+            cost = float(response.headers.get("x-openrouter-cost", 0))
+            
+            # Parse audit result
+            audit_data = json.loads(result["choices"][0]["message"]["content"])
+            
+            # Build response
+            formatted = FormattedResponse(**audit_data["respuesta_final"])
+            
+            return AuditResponse(
+                status=audit_data.get("status", "Aprobado"),
+                motivo_auditoria=audit_data.get("motivo_auditoria", "Respuesta integrada"),
+                respuesta_final=formatted,
+                metadata=audit_data.get("metadata", {
+                    "agentes_consultados": list(request.agent_responses.keys()),
+                    "agente_principal": request.primary_agent
+                }),
+                cost=cost
+            )
+            
+    except Exception as e:
+        logger.error(f"Multi-audit error: {str(e)}")
+        return AuditResponse(
+            status="Rechazado",
+            motivo_auditoria="Error en auditoría multi-agente",
+            respuesta_final=FormattedResponse(
+                titulo="❌ Error de Sistema",
+                respuesta_directa="Hubo un error al integrar las respuestas",
+                detalles=["El sistema no pudo completar la auditoría multi-agente"],
+                normativa_aplicable=[],
+                proxima_accion="Por favor, intente nuevamente"
+            ),
+            metadata={
+                "agentes_consultados": list(request.agent_responses.keys()),
+                "error": str(e)
+            },
+            cost=0.0
+        )
+
 @app.post("/format")
 async def format_response(audit_response: AuditResponse):
     """Format audit response as markdown"""
@@ -198,9 +332,18 @@ async def format_response(audit_response: AuditResponse):
     if r.advertencias:
         markdown += f"\n{r.advertencias}\n"
     
+    # Handle both single and multi-agent metadata
+    agents = audit_response.metadata.get('agentes_consultados', [])
+    if not agents:
+        # Fallback to single agent
+        single_agent = audit_response.metadata.get('agente_consultado', 'Sistema')
+        agents = [single_agent] if single_agent != 'Sistema' else []
+    
+    agents_text = ', '.join([a.upper() for a in agents]) if agents else 'Sistema'
+    
     markdown += f"""
 ---
-*Consultado: {audit_response.metadata.get('agente_consultado', 'Sistema')}*
+*Consultado: {agents_text}*
 *Confianza: {int(audit_response.metadata.get('confianza', 0.95) * 100)}%*"""
     
     return {"markdown": markdown, "audit_response": audit_response}

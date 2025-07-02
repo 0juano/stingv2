@@ -38,7 +38,8 @@ async def test_routing():
                 )
                 route_result = response.json()
                 
-            selected_agent = route_result['decision']['agent']
+            # Try to get agent from different possible fields
+            selected_agent = route_result['decision'].get('primary_agent') or route_result['decision'].get('agent')
             confidence = route_result['decision'].get('confidence', 0)
             
             # Check if routing is correct
