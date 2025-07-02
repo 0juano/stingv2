@@ -8,6 +8,9 @@ import json
 from pathlib import Path
 from typing import Dict, Any, Optional
 import logging
+import sys
+sys.path.append('/app')
+from cost_calculator import calculate_cost
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -93,8 +96,9 @@ async def answer(query: QueryRequest):
             response.raise_for_status()
             result = response.json()
             
-            # Extract cost from headers
-            cost = float(response.headers.get("x-openrouter-cost", 0))
+            # Calculate cost from usage data
+            usage = result.get("usage", {})
+            cost = calculate_cost(model, usage)
             
             # Parse the assistant's response
             try:

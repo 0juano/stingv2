@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application and prompt
 COPY main.py .
+COPY cost_calculator.py .
 COPY prompt.md .
 
 # Environment variables

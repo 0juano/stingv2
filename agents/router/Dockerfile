@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
 COPY main.py .
+COPY cost_calculator.py .
 
 # Environment variables
 ENV AGENT_NAME=router

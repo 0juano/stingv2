@@ -8,6 +8,9 @@ import json
 import yaml
 from typing import Dict, Any, List, Optional
 import logging
+import sys
+sys.path.append('/app')
+from cost_calculator import calculate_cost
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -115,8 +118,9 @@ Route to ALL relevant agents."""
             response.raise_for_status()
             result = response.json()
             
-            # Extract cost
-            cost = float(response.headers.get("x-openrouter-cost", 0))
+            # Calculate cost from usage data
+            usage = result.get("usage", {})
+            cost = calculate_cost(os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"), usage)
             
             # Parse routing decision
             decision_data = json.loads(result["choices"][0]["message"]["content"])
