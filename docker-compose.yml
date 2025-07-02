@@ -1,0 +1,93 @@
+services:
+  # Router service
+  router:
+    build: ./agents/router
+    container_name: router
+    ports:
+      - "8001:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - ROUTER_BIAS_BCRA=${ROUTER_BIAS_BCRA:-1.2}  # Boost BCRA by 20%
+      - ROUTER_BIAS_COMEX=${ROUTER_BIAS_COMEX:-0.9}  # Reduce Comex by 10%
+      - ROUTER_BIAS_SENASA=${ROUTER_BIAS_SENASA:-1.0}  # Keep Senasa neutral
+    volumes:
+      - ./agents.yml:/app/agents.yml:ro
+      - ./agents/router/prompt.md:/app/prompt.md:ro
+    networks:
+      - oracle-network
+    restart: unless-stopped
+
+  # BCRA Agent
+  bcra:
+    build: ./agents/bcra
+    container_name: bcra
+    ports:
+      - "8002:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - AGENT_NAME=bcra
+    networks:
+      - oracle-network
+    restart: unless-stopped
+
+  # Comex Agent
+  comex:
+    build: ./agents/comex
+    container_name: comex
+    ports:
+      - "8003:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - AGENT_NAME=comex
+    networks:
+      - oracle-network
+    restart: unless-stopped
+
+  # Senasa Agent
+  senasa:
+    build: ./agents/senasa
+    container_name: senasa
+    ports:
+      - "8004:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - AGENT_NAME=senasa
+    networks:
+      - oracle-network
+    restart: unless-stopped
+
+  # Auditor service
+  auditor:
+    build: ./agents/auditor
+    container_name: auditor
+    ports:
+      - "8005:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o  # Better model for auditing
+      - AGENT_NAME=auditor
+    networks:
+      - oracle-network
+    restart: unless-stopped
+
+  # Frontend (to be added)
+  # frontend:
+  #   build: ./frontend
+  #   container_name: frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - VITE_API_BASE_URL=http://localhost:8001
+  #   networks:
+  #     - oracle-network
+  #   depends_on:
+  #     - router
+  #     - auditor
+
+networks:
+  oracle-network:
+    driver: bridge

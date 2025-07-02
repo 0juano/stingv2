@@ -1,0 +1,39 @@
+# Agents configuration for Bureaucracy Oracle
+agents:
+  - slug: bcra
+    name: Agente BCRA
+    description: Banco Central - Normativa cambiaria y pagos al exterior
+    endpoint: http://bcra:8000
+    color: "#4F46E5"  # Indigo
+    icon: "🏦"
+    
+  - slug: comex
+    name: Agente Comex
+    description: Comercio Exterior - Importaciones y exportaciones
+    endpoint: http://comex:8000
+    color: "#059669"  # Green
+    icon: "📦"
+    
+  - slug: senasa
+    name: Agente Senasa
+    description: Sanidad agro-alimentaria y certificados fitosanitarios
+    endpoint: http://senasa:8000
+    color: "#DC2626"  # Red
+    icon: "🌾"
+
+router:
+  endpoint: http://router:8000
+  description: Enrutador inteligente de consultas
+
+auditor:
+  endpoint: http://auditor:8000
+  description: Auditor y formateador de respuestas
+  model: openai/gpt-4o  # Use better model for auditing
+
+# Out of scope message
+out_of_scope_message: |
+  Lo siento, tu consulta está fuera del alcance de los agentes disponibles.
+  Puedo ayudarte con:
+  - 🏦 BCRA: Pagos al exterior, compra de divisas, normativa cambiaria
+  - 📦 Comex: Importaciones, exportaciones, aranceles, licencias
+  - 🌾 Senasa: Certificados fitosanitarios, sanidad animal y vegetal
