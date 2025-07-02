@@ -1,7 +1,7 @@
-import TerminalV2 from './components/TerminalV2';
+import TerminalSimple from './components/TerminalSimple';
 
 function App() {
-  return <TerminalV2 />;
+  return <TerminalSimple />;
 }
 
 export default App
