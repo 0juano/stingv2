@@ -410,13 +410,13 @@ export default function TerminalSimple() {
             {/* COMEX Only */}
             <button
               onClick={() => {
-                setInput("¿Qué aranceles tiene la importación de notebooks?");
+                setInput("¿Cómo exportar vino a Brasil?");
                 textareaRef.current?.focus();
                 setTimeout(adjustTextareaHeight, 0);
               }}
               style={styles.button}
             >
-              Aranceles Tech (COMEX)
+              Exportar Vino (COMEX)
             </button>
             
             {/* SENASA Only */}

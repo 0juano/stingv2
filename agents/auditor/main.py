@@ -338,7 +338,6 @@ async def format_response(audit_response: AuditResponse):
     r = audit_response.respuesta_final
     
     markdown = f"""{r.titulo}
-
 {r.respuesta_directa}
 
 **Información Clave:**
@@ -352,10 +351,10 @@ async def format_response(audit_response: AuditResponse):
         for norma in r.normativa_aplicable:
             markdown += f"{norma}\n"
     
-    markdown += f"\n**¿Qué hacer ahora?**\n{r.proxima_accion}\n"
+    markdown += f"\n**¿Qué hacer ahora?**\n{r.proxima_accion}"
     
     if r.advertencias:
-        markdown += f"\n{r.advertencias}\n"
+        markdown += f"\n\n{r.advertencias}"
     
     # Handle both single and multi-agent metadata
     agents = audit_response.metadata.get('agentes_consultados', [])
@@ -366,12 +365,12 @@ async def format_response(audit_response: AuditResponse):
     
     agents_text = ', '.join([a.upper() for a in agents]) if agents else 'Sistema'
     
-    markdown += f"\n---\n*Consultado: {agents_text}*\n"
+    markdown += f"\n\n---\n*Consultado: {agents_text}*\n"
     
     # Include confidence score
     confidence = audit_response.metadata.get('confianza', 0.85)
     confidence_percent = int(confidence * 100)
-    markdown += f"*Confianza: {confidence_percent}%*\n"
+    markdown += f"*Confianza: {confidence_percent}%*"
     
     # Add confidence breakdown if available
     breakdown = audit_response.metadata.get('confidence_breakdown')
@@ -392,7 +391,7 @@ async def format_response(audit_response: AuditResponse):
     
     if breakdown and confidence_percent < 95:  # Show breakdown for non-perfect scores
         try:
-            markdown += f"\n📊 **Desglose de confianza:**\n"
+            markdown += f"\n\n📊 **Desglose de confianza:**\n"
             
             # Handle both nested format {"base": {"achieved": 50, "possible": 50}} 
             # and simple format {"base": 50}
@@ -429,7 +428,7 @@ async def format_response(audit_response: AuditResponse):
                         markdown += f"{label_formatted}{achieved:2d} / {possible} {'✓' if achieved == possible else '✗'}\n"
             
             markdown += f"{'─' * 40}\n"
-            markdown += f"Total:                   {confidence_percent:2d} / 100\n"
+            markdown += f"Total:                   {confidence_percent:2d} / 100"
         except Exception as e:
             logger.error(f"Error formatting confidence breakdown: {str(e)}")
     
