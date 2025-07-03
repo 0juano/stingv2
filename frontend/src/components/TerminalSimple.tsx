@@ -99,6 +99,7 @@ export default function TerminalSimple() {
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<any>({ currentStep: 'idle' });
+  const [showFlow, setShowFlow] = useState(true);
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
@@ -132,6 +133,7 @@ export default function TerminalSimple() {
     setIsProcessing(true);
 
     try {
+      setShowFlow(true);
       const result = await processQuery(input, (flow) => {
         setCurrentFlow(flow);
       });
@@ -146,6 +148,8 @@ export default function TerminalSimple() {
       };
 
       setMessages(prev => [...prev, responseMessage]);
+      // Hide flow diagram after response
+      setTimeout(() => setShowFlow(false), 1000);
     } catch (error: any) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -187,23 +191,31 @@ export default function TerminalSimple() {
       </style>
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '100%' }}>
-        {/* Header */}
-        <div style={styles.terminal}>
+        {/* Main Terminal */}
+        <div style={{ ...styles.terminal, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* Header */}
           <div style={styles.header}>
             <span style={{ color: '#ff6b35' }}>🏛️ BUREAUCRACY ORACLE</span>
             <span style={{ color: '#999', fontSize: '0.875rem' }}>
               BCRA • COMEX • SENASA
             </span>
           </div>
-        </div>
 
-        {/* Flow Diagram - Always visible */}
-        <div style={{ margin: '1rem 0', width: '600px' }}>
-          <FlowDiagramSimple flow={currentFlow} />
-        </div>
-
-        {/* Terminal */}
-        <div style={{ ...styles.terminal, marginTop: '1rem', flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* Flow Diagram - Conditionally visible */}
+          <AnimatePresence>
+            {showFlow && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <div style={{ padding: '1rem', borderBottom: '2px solid #444' }}>
+                  <FlowDiagramSimple flow={currentFlow} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div style={styles.body} ref={terminalRef} className="terminal-body">
             {messages.map((message) => (
               <div key={message.id} style={{ marginBottom: '1rem' }}>
@@ -240,6 +252,11 @@ export default function TerminalSimple() {
                 onChange={(e) => {
                   setInput(e.target.value);
                   adjustTextareaHeight();
+                  // Show flow diagram when user starts typing
+                  if (e.target.value && !showFlow) {
+                    setShowFlow(true);
+                    setCurrentFlow({ currentStep: 'idle' });
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
