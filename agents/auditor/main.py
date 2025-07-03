@@ -400,11 +400,11 @@ async def format_response(audit_response: AuditResponse):
     # Get search count
     busquedas = audit_response.metadata.get('busquedas_web', 0)
     
-    # Format the consultado line with search info if available
+    # Always show search status
     if busquedas > 0:
         markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *{busquedas} búsqueda{'s' if busquedas != 1 else ''} web*\n"
     else:
-        markdown += f"\n\n---\n*Consultado: {agents_text}*\n"
+        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *Sin búsquedas web*\n"
     
     # Include confidence score
     confidence = audit_response.metadata.get('confianza', 0.85)
