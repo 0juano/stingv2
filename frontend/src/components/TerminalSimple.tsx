@@ -98,7 +98,7 @@ export default function TerminalSimple() {
   ]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentFlow, setCurrentFlow] = useState<any>(null);
+  const [currentFlow, setCurrentFlow] = useState<any>({ currentStep: 'idle' });
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
@@ -156,7 +156,7 @@ export default function TerminalSimple() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsProcessing(false);
-      setCurrentFlow(null);
+      setCurrentFlow({ currentStep: 'idle' });
     }
   };
 
@@ -197,19 +197,10 @@ export default function TerminalSimple() {
           </div>
         </div>
 
-        {/* Flow Diagram */}
-        <AnimatePresence>
-          {currentFlow && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              style={{ margin: '1rem 0', width: '600px' }}
-            >
-              <FlowDiagramSimple flow={currentFlow} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Flow Diagram - Always visible */}
+        <div style={{ margin: '1rem 0', width: '600px' }}>
+          <FlowDiagramSimple flow={currentFlow} />
+        </div>
 
         {/* Terminal */}
         <div style={{ ...styles.terminal, marginTop: '1rem', flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
