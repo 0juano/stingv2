@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 # Copy all application code
 COPY agents/ ./agents/
 COPY orchestrator.py .
-COPY orchestrator_multiagent.py .
 COPY agents.yml .
 COPY proxy.py .
 COPY start.sh .
