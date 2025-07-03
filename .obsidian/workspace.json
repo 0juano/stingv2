@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "QUICK_DEPLOY_GUIDE.md",
     "agents/auditor/nixpacks.toml",
     "agents/senasa/nixpacks.toml",
     "agents/comex/nixpacks.toml",
@@ -192,7 +193,6 @@
     "agents/comex/railway.json",
     "agents/bcra/railway.json",
     "railway.json",
-    "api_gateway.py",
     "manual-deploy-steps.md",
     "DEPLOYMENT.md",
     "project-overview-for-chatgpt.md",
