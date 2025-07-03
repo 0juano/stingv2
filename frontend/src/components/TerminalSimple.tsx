@@ -14,11 +14,15 @@ interface Message {
 
 const styles = {
   container: {
-    minHeight: '100vh',
+    height: '100vh',
     backgroundColor: '#1a1a1a',
     color: '#e0e0e0',
     fontFamily: '"Source Code Pro", monospace',
     padding: '2rem',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    boxSizing: 'border-box' as const,
   },
   terminal: {
     border: '2px solid #444',
@@ -26,6 +30,9 @@ const styles = {
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.5)',
     width: '600px',
     margin: '0 auto',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    flex: 1,
   },
   header: {
     backgroundColor: '#333',
@@ -37,9 +44,9 @@ const styles = {
   },
   body: {
     padding: '1rem',
-    minHeight: '400px',
-    maxHeight: '600px',
     overflowY: 'auto' as const,
+    flex: '1 1 auto',
+    minHeight: 0,  // Important for flex to work properly
   },
   input: {
     backgroundColor: 'transparent',
@@ -179,7 +186,7 @@ export default function TerminalSimple() {
         `}
       </style>
       
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '100%' }}>
         {/* Header */}
         <div style={styles.terminal}>
           <div style={styles.header}>
@@ -205,7 +212,7 @@ export default function TerminalSimple() {
         </AnimatePresence>
 
         {/* Terminal */}
-        <div style={{ ...styles.terminal, marginTop: '1rem' }}>
+        <div style={{ ...styles.terminal, marginTop: '1rem', flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           <div style={styles.body} ref={terminalRef} className="terminal-body">
             {messages.map((message) => (
               <div key={message.id} style={{ marginBottom: '1rem' }}>
@@ -261,7 +268,7 @@ export default function TerminalSimple() {
         </div>
 
         {/* Quick Actions */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap', width: '600px' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', marginBottom: '1rem', flexWrap: 'wrap', width: '600px', flex: 'none' }}>
           <button
             onClick={() => setInput("¿Cómo exportar miel a Estados Unidos?")}
             style={styles.button}
