@@ -24,6 +24,8 @@ const styles = {
     border: '2px solid #444',
     backgroundColor: '#2a2a2a',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.5)',
+    width: '600px',
+    margin: '0 auto',
   },
   header: {
     backgroundColor: '#333',
@@ -177,7 +179,7 @@ export default function TerminalSimple() {
         `}
       </style>
       
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {/* Header */}
         <div style={styles.terminal}>
           <div style={styles.header}>
@@ -195,7 +197,7 @@ export default function TerminalSimple() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              style={{ margin: '1rem 0' }}
+              style={{ margin: '1rem 0', width: '600px' }}
             >
               <FlowDiagramSimple flow={currentFlow} />
             </motion.div>
@@ -259,7 +261,7 @@ export default function TerminalSimple() {
         </div>
 
         {/* Quick Actions */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap', width: '600px' }}>
           <button
             onClick={() => setInput("¿Cómo exportar miel a Estados Unidos?")}
             style={styles.button}

@@ -19,10 +19,10 @@ const styles = {
   container: {
     border: '2px solid #444',
     backgroundColor: '#1b1b1b',
-    padding: '2rem',
+    padding: '1.5rem',
     fontFamily: '"Source Code Pro", monospace',
-    maxWidth: '800px',
-    margin: '0 auto',
+    width: '100%',
+    boxSizing: 'border-box' as const,
   },
   agentBox: {
     border: '2px solid #444',
