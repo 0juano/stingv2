@@ -2,6 +2,21 @@
 
 A microservices-based intelligent assistant for navigating Argentine bureaucracy. Routes questions to specialized agents (BCRA, Comex, Senasa) and provides clear, actionable answers with legal citations.
 
+## 📋 What This App Does
+
+**✅ The app helps you understand:**
+- **HOW** to do things legally (procedures, steps, requirements)
+- **WHAT** regulations apply to your situation
+- **WHICH** documents you need for procedures
+- **WHERE** to complete procedures (offices, systems, websites)
+
+**❌ The app does NOT provide:**
+- Live market data (exchange rates, stock prices)
+- Real-time pricing information
+- Data that changes minute by minute
+
+> 💡 **Example:** Ask "¿Cómo comprar dólar MEP legalmente?" not "¿Cuál es la cotización del dólar MEP?"
+
 ## 🚀 Quick Start
 
 ```bash

@@ -27,6 +27,8 @@ services:
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
       - AGENT_NAME=bcra
     networks:
       - oracle-network
@@ -41,6 +43,8 @@ services:
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
       - AGENT_NAME=comex
     networks:
       - oracle-network
@@ -55,6 +59,8 @@ services:
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
       - AGENT_NAME=senasa
     networks:
       - oracle-network

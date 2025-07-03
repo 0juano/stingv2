@@ -3,6 +3,22 @@
 ## Overview
 This is a 5-agent n8n workflow that acts as a bureaucracy oracle for Argentine regulations. It intelligently routes queries to specialized agents and provides formatted, actionable responses.
 
+## Purpose & Scope
+The Bureaucracy Oracle is designed to help users navigate Argentine regulations and bureaucratic processes. 
+
+**The app helps users understand:**
+- **HOW** to do things legally (procedures, steps, requirements)
+- **WHAT** regulations apply to their situation
+- **WHICH** documents are needed for procedures
+- **WHERE** to do procedures (which offices, systems, websites)
+
+**The app does NOT provide:**
+- Live market data (exchange rates, stock prices)
+- Real-time pricing information
+- Data that changes minute by minute
+
+The search feature (when enabled) focuses on finding **current regulations and procedures**, not current prices or rates.
+
 ## Architecture
 
 ### 1. **Switchboard Agent**

@@ -11,6 +11,12 @@ import logging
 import sys
 sys.path.append('/app')
 from cost_calculator import calculate_cost
+sys.path.append('/app/agents')
+try:
+    from search_service import get_search_service
+except ImportError:
+    # Search service not available
+    get_search_service = None
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -69,11 +75,32 @@ async def answer(query: QueryRequest):
     
     prompt = prompt_path.read_text()
     
-    # Prepare messages
-    messages = [
-        {"role": "system", "content": prompt},
-        {"role": "user", "content": query.question}
-    ]
+    # Check if search is needed and enabled
+    search_results = None
+    if get_search_service:
+        try:
+            search_service = get_search_service()
+            if search_service.needs_search(query.question, agent_name):
+                logger.info(f"Search triggered for question: {query.question[:50]}...")
+                import asyncio
+                search_results = await search_service.search(query.question, agent_name)
+                logger.info(f"Search completed with {len(search_results.get('sources', []))} sources")
+        except Exception as e:
+            logger.error(f"Search error: {str(e)}")
+    
+    # Prepare messages with optional search context
+    if search_results and not search_results.get("error"):
+        search_context = search_service.format_for_prompt(search_results)
+        enhanced_question = f"{query.question}\n\n{search_context}"
+        messages = [
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": enhanced_question}
+        ]
+    else:
+        messages = [
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": query.question}
+        ]
     
     try:
         async with httpx.AsyncClient() as client:

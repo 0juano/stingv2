@@ -25,6 +25,15 @@ kanban-plugin: board
 
 ## 🚧 In Progress
 
+- [ ] **[HIGH PRIORITY] Complete Tavily Search Integration** 🔍
+  - [x] Create search_service.py module
+  - [x] Add search detection logic
+  - [ ] Integrate with BCRA agent
+  - [x] Integrate with COMEX agent (partial)
+  - [ ] Integrate with SENASA agent
+  - [x] Add caching layer
+  - [ ] Create search-specific test suite
+  - [ ] Update agent prompts for search context
 - [ ] Test multi-agent implementation with 230 questions
 - [ ] Create full test suite (test_suite.py)
 - [ ] Build performance analysis dashboard
@@ -67,6 +76,12 @@ kanban-plugin: board
 - [x] Create orchestrator_multiagent.py
 - [x] Modify auditor to merge multi-agent responses
 - [x] Display which agents were consulted
+- [x] **Run ACTUAL A/B Test with Real Questions** ✅
+  - Tested 5 queries with real timing data
+  - WITHOUT search avg: 17.4s
+  - WITH search avg: 16.3s  
+  - Confirmed search adds specific regulations (RG 5653/2025)
+  - Created ab_test_final_real.html with only real data
 
 
 ## 🐛 Known Issues
