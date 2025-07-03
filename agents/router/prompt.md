@@ -108,3 +108,11 @@ Examples:
 - Set "primary_agent" as the most important one
 - For multi-agent queries, explain each agent's role in "reason"
 - Mark as out_of_scope only if truly unrelated to Argentine regulations
+
+## Search Context Handling
+
+When search results are provided with the query:
+1. The router should still route based on the core topic, not the search results
+2. Search results will be passed to the selected agent(s) for processing
+3. The routing decision remains based on which agency has jurisdiction
+4. Always explain routing decisions in Spanish in the "reason" field
