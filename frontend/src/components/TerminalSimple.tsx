@@ -47,6 +47,12 @@ const styles = {
     flex: 1,
     fontFamily: 'inherit',
     fontSize: 'inherit',
+    resize: 'none' as const,
+    minHeight: '1.5em',
+    maxHeight: '120px',
+    overflow: 'auto' as const,
+    wordWrap: 'break-word' as const,
+    whiteSpace: 'pre-wrap' as const,
   },
   cursor: {
     display: 'inline-block',
@@ -85,7 +91,15 @@ export default function TerminalSimple() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<any>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+    }
+  };
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -218,15 +232,25 @@ export default function TerminalSimple() {
             ))}
             
             {/* Input Line */}
-            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
-              <span style={{ color: '#ff6b35' }}>&gt;</span>
-              <input
-                type="text"
+            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+              <span style={{ color: '#ff6b35', marginTop: '0.25rem' }}>&gt;</span>
+              <textarea
+                ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  adjustTextareaHeight();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
                 disabled={isProcessing}
                 style={styles.input}
                 placeholder={isProcessing ? "Processing..." : "Type your question..."}
+                rows={1}
                 autoFocus
               />
               {!isProcessing && <span style={styles.cursor}></span>}
