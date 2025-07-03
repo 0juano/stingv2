@@ -16,6 +16,9 @@ help:
 # Development mode with hot reload
 dev:
 	docker-compose up --build
+	@echo ""
+	@echo "🚀 Frontend: http://localhost:5173"
+	@echo ""
 
 # Build all images
 build:
