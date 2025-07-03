@@ -168,11 +168,23 @@ Responde con JSON:
             # Build response
             formatted = FormattedResponse(**audit_data["respuesta_final"])
             
+            # Extract search metadata from agent response
+            search_metadata = request.agent_response.get("_search_metadata", {})
+            metadata = audit_data.get("metadata", {"agente_consultado": request.agent_name})
+            
+            # Add search info to metadata
+            if search_metadata.get("used"):
+                metadata["busquedas_web"] = search_metadata.get("count", 1)
+                metadata["fuentes_consultadas"] = search_metadata.get("sources_consulted", [])
+            else:
+                metadata["busquedas_web"] = 0
+                metadata["fuentes_consultadas"] = []
+            
             return AuditResponse(
                 status=audit_data.get("status", "Rechazado"),
                 motivo_auditoria=audit_data.get("motivo_auditoria", "Error en auditoría"),
                 respuesta_final=formatted,
-                metadata=audit_data.get("metadata", {"agente_consultado": request.agent_name}),
+                metadata=metadata,
                 cost=cost
             )
             
@@ -302,14 +314,34 @@ Responde con JSON:
             # Build response
             formatted = FormattedResponse(**audit_data["respuesta_final"])
             
+            # Extract and aggregate search metadata from all agents
+            metadata = audit_data.get("metadata", {
+                "agentes_consultados": list(request.agent_responses.keys()),
+                "agente_principal": request.primary_agent
+            })
+            
+            total_searches = 0
+            all_sources = []
+            
+            for agent_name, response in request.agent_responses.items():
+                agent_answer = response.get("answer", {})
+                search_metadata = agent_answer.get("_search_metadata", {})
+                
+                if search_metadata.get("used"):
+                    total_searches += search_metadata.get("count", 1)
+                    sources = search_metadata.get("sources_consulted", [])
+                    # Prefix sources with agent name
+                    for source in sources:
+                        all_sources.append(f"[{agent_name.upper()}] {source}")
+            
+            metadata["busquedas_web"] = total_searches
+            metadata["fuentes_consultadas"] = all_sources
+            
             return AuditResponse(
                 status=audit_data.get("status", "Aprobado"),
                 motivo_auditoria=audit_data.get("motivo_auditoria", "Respuesta integrada"),
                 respuesta_final=formatted,
-                metadata=audit_data.get("metadata", {
-                    "agentes_consultados": list(request.agent_responses.keys()),
-                    "agente_principal": request.primary_agent
-                }),
+                metadata=metadata,
                 cost=cost
             )
             
@@ -365,7 +397,14 @@ async def format_response(audit_response: AuditResponse):
     
     agents_text = ', '.join([a.upper() for a in agents]) if agents else 'Sistema'
     
-    markdown += f"\n\n---\n*Consultado: {agents_text}*\n"
+    # Get search count
+    busquedas = audit_response.metadata.get('busquedas_web', 0)
+    
+    # Format the consultado line with search info if available
+    if busquedas > 0:
+        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *{busquedas} búsqueda{'s' if busquedas != 1 else ''} web*\n"
+    else:
+        markdown += f"\n\n---\n*Consultado: {agents_text}*\n"
     
     # Include confidence score
     confidence = audit_response.metadata.get('confianza', 0.85)

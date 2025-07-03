@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py .
 COPY cost_calculator.py .
 COPY prompt.md .
+COPY search_service.py .
+COPY search_config.py .
 
 # Environment variables
 ENV AGENT_NAME=comex

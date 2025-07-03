@@ -1,0 +1,39 @@
+🔄 Routing query: ¿Qué aranceles pagan los notebooks?
+📞 Calling 1 agent(s) in parallel: comex
+✅ Auditing combined responses...
+
+==================================================
+🎯 Aranceles de Importación para Notebooks en Argentina (2025)
+
+✅ Los notebooks importados a Argentina están clasificados bajo el NCM 8471.30.00 y pagan un arancel de importación del 10% a partir de 2025, según la normativa vigente.
+
+**Información Clave:**
+📌 [COMEX] Los notebooks (NCM 8471.30.00) tributan un arancel de importación del 10% en 2025. Esta información se basa en las Resoluciones Generales 5653/2025 y 5664/2025 de la AFIP, que regulan la nomenclatura arancelaria y los derechos de importación. Es fundamental verificar la clasificación NCM, consultar el arancel aplicable y revisar las normativas vigentes antes de importar.
+📌 [COMEX] Documentación necesaria: Factura de compra y Declaración de importación.
+
+**Normativa Aplicable:**
+📋 [COMEX] Resolución General AFIP 5653/2025
+📋 [COMEX] Resolución General AFIP 5664/2025
+
+**¿Qué hacer ahora?**
+👉 Verificar la clasificación NCM del producto, consultar el arancel vigente en la normativa actualizada y reunir la documentación necesaria (factura de compra y declaración de importación) antes de iniciar el trámite de importación.
+
+⚠️ Los aranceles pueden variar si hay nuevas normativas o acuerdos comerciales. Se recomienda revisar siempre la normativa vigente antes de importar.
+
+---
+*Consultado: COMEX*
+*Confianza: 90%*
+
+📊 **Desglose de confianza:**
+Puntuación base:         50 / 50 ✓
+Regulaciones específicas:18 / 20 ✗
+Artículos exactos:        0 / 15 ✗
+Procedimientos completos: 0 / 10 ✗
+Actualizaciones recientes: 0 / 5 ✗
+────────────────────────────────────────
+Total:                   90 / 100
+
+==================================================
+
+🤝 Agents consulted: comex
+💰 Total cost: $0.0010

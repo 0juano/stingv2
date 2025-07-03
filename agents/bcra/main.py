@@ -137,6 +137,20 @@ async def answer(query: QueryRequest):
                     "error": "Response was not valid JSON"
                 }
             
+            # Add search metadata if available
+            if search_results and not search_results.get("error"):
+                answer_content["_search_metadata"] = {
+                    "used": True,
+                    "count": 1,  # One search was performed
+                    "sources_consulted": search_results.get("sources_consulted", [])
+                }
+            else:
+                answer_content["_search_metadata"] = {
+                    "used": False,
+                    "count": 0,
+                    "sources_consulted": []
+                }
+            
             return QueryResponse(
                 answer=answer_content,
                 agent=agent_name,

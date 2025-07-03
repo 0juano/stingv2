@@ -143,7 +143,6 @@ class TavilySearchService:
     def _process_results(self, raw_results: Dict, agent_type: str) -> Dict[str, Any]:
         """Process and extract key information"""
         import re
-        from urllib.parse import urlparse
         
         results = raw_results.get("results", [])[:5]
         answer = raw_results.get("answer", "")
@@ -152,8 +151,7 @@ class TavilySearchService:
             "summary": answer,
             "sources": [],
             "key_facts": [],
-            "last_updated": datetime.now().isoformat(),
-            "sources_consulted": []  # Track actual sources for display
+            "last_updated": datetime.now().isoformat()
         }
         
         for result in results:
@@ -164,19 +162,6 @@ class TavilySearchService:
                 "score": result.get("score", 0)
             }
             processed["sources"].append(source)
-            
-            # Extract domain and key info for display
-            if result.get("url"):
-                domain = urlparse(result["url"]).netloc
-                # Extract regulation numbers from title or content
-                text = f"{result.get('title', '')} {result.get('content', '')}"
-                regulations = re.findall(r'(?:Resolución|Comunicación|Decreto|NCM)\s*(?:N°|Nº|A)?\s*[\d\./-]+', text)
-                
-                if regulations:
-                    for reg in regulations[:2]:  # Max 2 per source
-                        processed["sources_consulted"].append(f"{domain} ({reg})")
-                else:
-                    processed["sources_consulted"].append(domain)
             
             # Extract agent-specific facts
             content = source["content"].lower()
