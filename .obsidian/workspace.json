@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "test_all_agents_search.py",
     "test_full_search.py",
     "test_quick_search.py",
     "agents/senasa/search_service.py",
@@ -191,7 +192,6 @@
     "test_search_content.py",
     "test_notebook_tariff_improved.py",
     "test_outputs/test_suite_output.log",
-    "scripts/updated_formatter.js",
     "docs/test_queries.md",
     "docs/confidence_implementation.md",
     "docs/bureaucracy_oracle_complete_logic.md",
