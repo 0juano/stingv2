@@ -19,18 +19,23 @@ const styles = {
   container: {
     border: '2px solid #444',
     backgroundColor: '#1b1b1b',
-    padding: '1.5rem',
+    padding: '1rem',
     fontFamily: '"Source Code Pro", monospace',
     width: '100%',
+    height: '240px',
     boxSizing: 'border-box' as const,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
   },
   agentBox: {
     border: '2px solid #444',
     backgroundColor: '#2a2a2a',
-    padding: '0.5rem 1rem',
+    padding: '0.375rem 0.75rem',
     display: 'inline-block',
-    minWidth: '120px',
+    minWidth: '110px',
     textAlign: 'center' as const,
+    fontSize: '0.875rem',
   },
   agentBoxActive: {
     borderColor: '#ff6b35',
@@ -41,7 +46,9 @@ const styles = {
   connector: {
     color: '#666',
     textAlign: 'center' as const,
-    margin: '0.5rem 0',
+    margin: '0.25rem 0',
+    fontSize: '0.75rem',
+    lineHeight: 1,
   },
 };
 
@@ -81,7 +88,7 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
 
   return (
     <div style={styles.container}>
-      <div style={{ textAlign: 'center', color: '#999', marginBottom: '1rem' }}>
+      <div style={{ textAlign: 'center', color: '#999', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
         ═══════════ PROCESSING FLOW ═══════════
       </div>
 

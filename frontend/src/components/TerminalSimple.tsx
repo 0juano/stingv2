@@ -18,7 +18,7 @@ const styles = {
     backgroundColor: '#1a1a1a',
     color: '#e0e0e0',
     fontFamily: '"Source Code Pro", monospace',
-    padding: '2rem',
+    padding: '1.5rem',
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
@@ -99,7 +99,7 @@ export default function TerminalSimple() {
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<any>({ currentStep: 'idle' });
-  const [showFlow, setShowFlow] = useState(true);
+  const [showFlow, setShowFlow] = useState(false);  // Start with flow hidden
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
@@ -201,21 +201,17 @@ export default function TerminalSimple() {
             </span>
           </div>
 
-          {/* Flow Diagram - Conditionally visible */}
-          <AnimatePresence>
-            {showFlow && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ overflow: 'hidden' }}
-              >
-                <div style={{ padding: '1rem', borderBottom: '2px solid #444' }}>
-                  <FlowDiagramSimple flow={currentFlow} />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Flow Diagram Container - Fixed height */}
+          <div style={{ 
+            height: showFlow ? '280px' : '0px',
+            overflow: 'hidden',
+            transition: 'height 0.3s ease-in-out',
+            borderBottom: showFlow ? '2px solid #444' : 'none'
+          }}>
+            <div style={{ padding: '1rem' }}>
+              <FlowDiagramSimple flow={currentFlow} />
+            </div>
+          </div>
           <div style={styles.body} ref={terminalRef} className="terminal-body">
             {messages.map((message) => (
               <div key={message.id} style={{ marginBottom: '1rem' }}>
