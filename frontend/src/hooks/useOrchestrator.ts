@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { 
+  getAnalyzingQuery, 
+  getRoutingMultiple, 
+  getRoutingSingle, 
+  getConsultingMultiple, 
+  getConsultingSingle,
+  getIntegratingResponses,
+  getValidatingResponse,
+  getOutOfScope 
+} from '../utils/bureaucratMessages';
 
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
 const agentPorts = {
-  bcra: 8002,
-  comex: 8003,
-  senasa: 8004
+  bcra: import.meta.env.VITE_BCRA_PORT || 8002,
+  comex: import.meta.env.VITE_COMEX_PORT || 8003,
+  senasa: import.meta.env.VITE_SENASA_PORT || 8004
 };
 
 interface FlowUpdate {
@@ -27,12 +37,14 @@ export function useOrchestrator() {
   ) => {
     setIsLoading(true);
     setError(null);
+    
+    const startTime = Date.now(); // Track query start time
 
     try {
       // Step 1: Route the query
-      onFlowUpdate?.({ currentStep: 'router', processing: 'Analyzing query...' });
+      onFlowUpdate?.({ currentStep: 'router', processing: getAnalyzingQuery() });
       
-      const routeResponse = await axios.post(`${API_BASE_URL}/route`, { question });
+      const routeResponse = await axios.post(`${API_BASE_URL}/route`, { question }, { timeout: 10000 });
       const routing = routeResponse.data.decision;
       
       // Handle both old and new routing formats
@@ -47,22 +59,25 @@ export function useOrchestrator() {
           primary_agent: primaryAgent
         },
         processing: agents.length > 1 
-          ? `Routing to ${agents.length} agents: ${agents.map((a: string) => a.toUpperCase()).join(', ')}...`
-          : `Routing to ${primaryAgent.toUpperCase()}...`,
+          ? getRoutingMultiple(agents.map((a: string) => a.toUpperCase()).join(', '))
+          : getRoutingSingle(primaryAgent),
         stepData: { agents, primaryAgent, confidence: routing.confidence }
       });
 
       // If out of scope, return early
       if (!agents.length || primaryAgent === 'out_of_scope') {
+        const duration = (Date.now() - startTime) / 1000; // Duration in seconds
+        
         return {
           success: false,
-          response: "❌ Esta consulta está fuera del alcance del sistema. Por favor, realiza preguntas sobre regulaciones argentinas (BCRA, Comex, Senasa).",
-          totalCost: routeResponse.data.cost || 0
+          response: `❌ ${getOutOfScope()}`,
+          totalCost: routeResponse.data.cost || 0,
+          duration
         };
       }
 
       // Step 2: Call agents (single or multiple)
-      await new Promise(resolve => setTimeout(resolve, 500)); // Brief pause for UX
+      // Removed artificial delay for better performance
       
       let agentResponses: any = {};
       let totalAgentCost = 0;
@@ -72,21 +87,18 @@ export function useOrchestrator() {
         onFlowUpdate?.({ 
           currentStep: 'agents',
           routing,
-          processing: `Consultando ${agents.length} agentes en paralelo...`,
+          processing: getConsultingMultiple(agents.length.toString()),
           stepData: { agentCount: agents.length, agents }
         });
         
         const agentPromises = agents.map(async (agent: string) => {
-          const agentPort = {
-            bcra: 8002,
-            comex: 8003,
-            senasa: 8004
-          }[agent] || 8002;
+          const agentPort = agentPorts[agent as keyof typeof agentPorts] || 8002;
           
           try {
             const response = await axios.post(
               `http://localhost:${agentPort}/answer`,
-              { question }
+              { question },
+              { timeout: 35000 } // 35 seconds timeout for agents
             );
             return { agent, response: response.data };
           } catch (error) {
@@ -100,59 +112,74 @@ export function useOrchestrator() {
           agentResponses[agent] = response;
           totalAgentCost += response.cost || 0;
         });
+        
+        // Add completion notification for multi-agent flow
+        onFlowUpdate?.({ 
+          currentStep: 'agents',
+          routing,
+          processing: `✅ Los ${agents.length} agentes respondieron`,
+          stepData: { agentCount: agents.length, agents, completed: true }
+        });
       } else {
         // Single agent case - backwards compatibility
         const singleAgent = agents[0];
-        const agentPort = {
-          bcra: 8002,
-          comex: 8003,
-          senasa: 8004
-        }[singleAgent as keyof typeof agentPorts] || 8002;
+        const agentPort = agentPorts[singleAgent as keyof typeof agentPorts] || 8002;
 
         onFlowUpdate?.({ 
           currentStep: singleAgent,
           routing,
-          processing: 'Consultando regulaciones...',
+          processing: getConsultingSingle(singleAgent),
           stepData: { agent: singleAgent }
         });
 
         const agentResponse = await axios.post(
           `http://localhost:${agentPort}/answer`,
-          { question }
+          { question },
+          { timeout: 35000 } // 35 seconds timeout for single agent
         );
         
         agentResponses[singleAgent] = agentResponse.data;
         totalAgentCost = agentResponse.data.cost || 0;
+        
+        // Add completion notification for single agent
+        onFlowUpdate?.({ 
+          currentStep: singleAgent,
+          routing,
+          processing: `✅ ${singleAgent.toUpperCase()} respondió`,
+          stepData: { agent: singleAgent, completed: true }
+        });
       }
 
       // Step 3: Audit the response(s)
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Removed artificial delays for better performance
       
       onFlowUpdate?.({ 
         currentStep: 'auditor',
         routing,
-        processing: agents.length > 1 ? 'Integrando respuestas...' : 'Validando respuesta...',
+        processing: agents.length > 1 ? getIntegratingResponses() : getValidatingResponse(),
         stepData: { isMultiAgent: agents.length > 1, agentCount: agents.length }
       });
 
       let auditResponse;
+      const auditorUrl = import.meta.env.VITE_AUDITOR_URL || 'http://localhost:8005';
+      
       if (agents.length > 1) {
         // Multi-agent audit
         try {
-          auditResponse = await axios.post('http://localhost:8005/audit-multi', {
+          auditResponse = await axios.post(`${auditorUrl}/audit-multi`, {
             user_question: question,
             agent_responses: agentResponses,
             primary_agent: primaryAgent
-          });
+          }, { timeout: 45000 }); // 45 seconds timeout for multi-agent audit
         } catch (error: any) {
           if (error.response?.status === 404) {
             // Fallback to single agent audit for primary agent
             console.warn('Multi-agent audit not available, using primary agent only');
-            auditResponse = await axios.post('http://localhost:8005/audit', {
+            auditResponse = await axios.post(`${auditorUrl}/audit`, {
               user_question: question,
               agent_response: agentResponses[primaryAgent]?.answer || {},
               agent_name: primaryAgent
-            });
+            }, { timeout: 30000 }); // 30 seconds timeout for fallback audit
           } else {
             throw error;
           }
@@ -160,15 +187,15 @@ export function useOrchestrator() {
       } else {
         // Single agent audit
         const singleAgent = agents[0];
-        auditResponse = await axios.post('http://localhost:8005/audit', {
+        auditResponse = await axios.post(`${auditorUrl}/audit`, {
           user_question: question,
           agent_response: agentResponses[singleAgent]?.answer || {},
           agent_name: singleAgent
-        });
+        }, { timeout: 30000 }); // 30 seconds timeout for single agent audit
       }
 
       // Step 4: Format the response
-      const formatResponse = await axios.post('http://localhost:8005/format', auditResponse.data);
+      const formatResponse = await axios.post(`${auditorUrl}/format`, auditResponse.data, { timeout: 15000 }); // 15 seconds timeout for formatting
 
       onFlowUpdate?.({ 
         currentStep: 'complete',
@@ -177,11 +204,13 @@ export function useOrchestrator() {
         stepData: { finished: true }
       });
 
-      // Calculate total cost
+      // Calculate total cost and duration
       const totalCost = 
         (routeResponse.data.cost || 0) +
         totalAgentCost +
         (auditResponse.data.cost || 0);
+      
+      const duration = (Date.now() - startTime) / 1000; // Duration in seconds
 
       return {
         success: true,
@@ -192,17 +221,21 @@ export function useOrchestrator() {
           audit: auditResponse.data
         },
         agentsConsulted: agents,
-        totalCost
+        totalCost,
+        duration
       };
 
     } catch (err: any) {
       console.error('Orchestrator error:', err);
       setError(err.message || 'Error processing query');
       
+      const duration = (Date.now() - startTime) / 1000; // Duration in seconds
+      
       return {
         success: false,
         response: `❌ Error: ${err.message || 'No se pudo procesar la consulta. Verifica que los servicios estén activos.'}`,
-        totalCost: 0
+        totalCost: 0,
+        duration
       };
     } finally {
       setIsLoading(false);

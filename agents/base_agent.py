@@ -98,13 +98,31 @@ async def answer(query: QueryRequest):
             
             # Parse the assistant's response
             try:
-                answer_content = json.loads(result["choices"][0]["message"]["content"])
-            except json.JSONDecodeError:
-                # Fallback if response isn't valid JSON
-                answer_content = {
-                    "response": result["choices"][0]["message"]["content"],
-                    "error": "Response was not valid JSON"
-                }
+                raw_content = result["choices"][0]["message"]["content"]
+                answer_content = json.loads(raw_content)
+            except json.JSONDecodeError as e:
+                # Enhanced fallback with better error info
+                raw_content = result["choices"][0]["message"]["content"]
+                logger.error(f"JSON parsing failed for {agent_name}: {str(e)}")
+                logger.error(f"Raw content length: {len(raw_content)}")
+                logger.error(f"Raw content preview: {raw_content[:200]}...")
+                
+                # Try to extract partial JSON if possible
+                try:
+                    # Sometimes the JSON is truncated, try to find complete JSON objects
+                    import re
+                    json_match = re.search(r'\{.*\}', raw_content, re.DOTALL)
+                    if json_match:
+                        answer_content = json.loads(json_match.group())
+                    else:
+                        raise json.JSONDecodeError("No JSON object found", raw_content, 0)
+                except:
+                    # Final fallback
+                    answer_content = {
+                        "Respuesta": "Error al procesar la respuesta del agente. Inténtelo nuevamente.",
+                        "error": "Response was not valid JSON",
+                        "raw_content_preview": raw_content[:500] if raw_content else "No content"
+                    }
             
             return QueryResponse(
                 answer=answer_content,

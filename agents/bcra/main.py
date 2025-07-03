@@ -87,7 +87,7 @@ async def answer(query: QueryRequest):
                 json={
                     "model": model,
                     "messages": messages,
-                    "temperature": 0.1,  # Low temperature for consistency
+                    "temperature": 0.3,  # Balanced temperature for better instruction following
                     "response_format": {"type": "json_object"}  # Force JSON response
                 },
                 timeout=30.0

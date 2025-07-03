@@ -47,6 +47,12 @@ If agents return INSUFFICIENT_CONTEXT:
 2. Ensure the query is specific enough
 3. Review agent prompts for coverage gaps
 
+## Language Requirements
+- **IMPORTANT**: All agent responses MUST be in Spanish
+- The UI text is in Spanish (except technical headers)
+- This is a product for Argentina - all content should be in Spanish
+- The backend agents should return Spanish responses
+
 ## Future Enhancements
 - Add AFIP agent for tax regulations
 - Add IGJ agent for corporate law

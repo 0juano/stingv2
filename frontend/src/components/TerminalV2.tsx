@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import FlowDiagram from './FlowDiagram';
 import { useOrchestrator } from '../hooks/useOrchestrator';
+
 
 interface Message {
   id: string;
@@ -35,7 +38,7 @@ export default function TerminalV2() {
   const [showMobileLogs, setShowMobileLogs] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
-  const logsRef = useRef<HTMLDivElement>(null);
+  const logsRef = useRef<HTMLPreElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
 
@@ -188,7 +191,11 @@ export default function TerminalV2() {
               )}
               {message.type === 'response' && (
                 <div className="space-y-2 text-gray-300">
-                  <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                  <div className="break-words markdown-content">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                   <div className="text-xs text-gray-500 space-y-1">
                     {message.agentsConsulted && message.agentsConsulted.length > 0 && (
                       <div>🤝 Agents: {message.agentsConsulted.map(a => a.toUpperCase()).join(', ')}</div>

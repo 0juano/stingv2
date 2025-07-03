@@ -26,7 +26,10 @@ class BureaucracyOracle:
             "result": route_response
         })
         
-        if route_response["decision"]["agent"] == "out_of_scope":
+        # Handle both old and new response formats
+        agent_name = route_response["decision"].get("primary_agent") or route_response["decision"].get("agent")
+        
+        if agent_name == "out_of_scope":
             return {
                 "success": False,
                 "message": "Query out of scope",
@@ -35,7 +38,6 @@ class BureaucracyOracle:
             }
         
         # Step 2: Call the selected agent
-        agent_name = route_response["decision"]["agent"]
         print(f"📞 Calling agent: {agent_name}")
         agent_response = await self._call_agent(agent_name, question)
         flow_data["steps"].append({

@@ -80,6 +80,7 @@ Proceso de Auditoría:
 1. Verifica que la respuesta aborde la consulta directamente
 2. Valida que las citas normativas tengan formato correcto
 3. Asegura que la información sea precisa y completa
+4. IMPORTANTE: Extrae el valor 'confidence' de la respuesta del agente para usar en metadata
 
 Proceso de Resumen:
 Crea una respuesta con:
@@ -110,7 +111,17 @@ Responde con JSON:
   }},
   "metadata": {{
     "agente_consultado": "{request.agent_name}",
-    "confianza": 0.95
+    "confianza": <extraer del campo 'confidence' de la respuesta del agente, o 0.85 si no está presente>,
+    "confidence_factors": <incluir confidence_factors del agente si están disponibles>,
+    "confidence_breakdown": <IMPORTANTE: Si el agente reporta confidence=0.80 con todos los factors en true excepto posiblemente recent_updates, usa estos valores exactos para reflejar correctamente el score:
+      {{
+        "base": {{"achieved": 50, "possible": 50}},
+        "specific_regulations": {{"achieved": 16, "possible": 20}},
+        "exact_articles": {{"achieved": 12, "possible": 15}},
+        "complete_procedures": {{"achieved": 8, "possible": 10}},
+        "recent_updates": {{"achieved": <4 si has_recent_updates es true, 0 si false>, "possible": 5}}
+      }}
+      Para otros casos, calcula proporcionalmente basándote en el confidence real>
   }}
 }}"""
 
@@ -210,6 +221,10 @@ Proceso de Auditoría Multi-Agente:
 2. PRIORIZA la información del agente principal pero incluye datos relevantes de otros
 3. RESUELVE contradicciones dando prioridad a la fuente más específica
 4. CITA qué agente proporcionó cada información clave
+5. EXTRAE el 'confidence' de cada agente:
+   - Para consultas de UN agente: usa su confidence directamente
+   - Para consultas MULTI-agente: usa el confidence del agente principal
+   - Si no hay confidence disponible: usa 0.85 como valor por defecto
 
 Proceso de Resumen:
 Crea una respuesta UNIFICADA con:
@@ -245,7 +260,12 @@ Responde con JSON:
   "metadata": {{
     "agentes_consultados": {list(request.agent_responses.keys())},
     "agente_principal": "{request.primary_agent}",
-    "confianza": 0.95
+    "confianza": <usar el confidence del agente principal SIEMPRE>,
+    "confidence_details": <incluir confidence de cada agente consultado>,
+    "confidence_breakdown": <IMPORTANTE: Toma el confidence_breakdown del agente principal ({request.primary_agent}) directamente de su respuesta. Si no está disponible, usa el confidence del agente principal para calcular proporcionalmente:
+      - Si confidence = 0.85: base=50, regulations=17, articles=13, procedures=8.5, updates=4.25
+      - Si confidence = 0.80: base=50, regulations=16, articles=12, procedures=8, updates=4
+      - Para otros valores, calcula proporcionalmente>
   }}
 }}"""
 
@@ -346,10 +366,72 @@ async def format_response(audit_response: AuditResponse):
     
     agents_text = ', '.join([a.upper() for a in agents]) if agents else 'Sistema'
     
-    markdown += f"""
----
-*Consultado: {agents_text}*
-*Confianza: {int(audit_response.metadata.get('confianza', 0.95) * 100)}%*"""
+    markdown += f"\n---\n*Consultado: {agents_text}*\n"
+    
+    # Include confidence score
+    confidence = audit_response.metadata.get('confianza', 0.85)
+    confidence_percent = int(confidence * 100)
+    markdown += f"*Confianza: {confidence_percent}%*\n"
+    
+    # Add confidence breakdown if available
+    breakdown = audit_response.metadata.get('confidence_breakdown')
+    logger.info(f"Confidence breakdown raw: {breakdown}")
+    
+    # If breakdown is confidence_factors instead of scores, calculate the breakdown
+    if breakdown and isinstance(breakdown, dict) and 'has_specific_regulations' in breakdown:
+        # This is confidence_factors, not a proper breakdown - calculate it
+        confidence = audit_response.metadata.get('confianza', 0.85)
+        breakdown = {
+            'base': 50,
+            'regulations': int(20 * confidence) if breakdown.get('has_specific_regulations') else 0,
+            'articles': int(15 * confidence) if breakdown.get('has_exact_articles') else 0, 
+            'procedures': int(10 * confidence) if breakdown.get('has_complete_procedures') else 0,
+            'updates': int(5 * confidence) if breakdown.get('has_recent_updates') else 0
+        }
+        logger.info(f"Calculated breakdown: {breakdown}")
+    
+    if breakdown and confidence_percent < 95:  # Show breakdown for non-perfect scores
+        try:
+            markdown += f"\n📊 **Desglose de confianza:**\n"
+            
+            # Handle both nested format {"base": {"achieved": 50, "possible": 50}} 
+            # and simple format {"base": 50}
+            def get_score(key, default_possible):
+                if key in breakdown:
+                    if isinstance(breakdown[key], dict):
+                        return int(breakdown[key]['achieved']), breakdown[key]['possible']
+                    else:
+                        # Handle both integer and float values
+                        return int(float(breakdown[key])), default_possible
+                return None, None
+            
+            # Map both possible key names
+            score_map = [
+                ('base', 'Puntuación base', 50),
+                ('specific_regulations', 'Regulaciones específicas', 20),
+                ('regulations', 'Regulaciones específicas', 20),
+                ('exact_articles', 'Artículos exactos', 15),
+                ('articles', 'Artículos exactos', 15),
+                ('complete_procedures', 'Procedimientos completos', 10),
+                ('procedures', 'Procedimientos completos', 10),
+                ('recent_updates', 'Actualizaciones recientes', 5),
+                ('updates', 'Actualizaciones recientes', 5)
+            ]
+            
+            shown_labels = set()
+            for key, label, default_possible in score_map:
+                if label not in shown_labels:
+                    achieved, possible = get_score(key, default_possible)
+                    logger.info(f"Processing {key} -> {label}: achieved={achieved}, possible={possible}")
+                    if achieved is not None:
+                        shown_labels.add(label)
+                        label_formatted = f"{label}:".ljust(25)
+                        markdown += f"{label_formatted}{achieved:2d} / {possible} {'✓' if achieved == possible else '✗'}\n"
+            
+            markdown += f"{'─' * 40}\n"
+            markdown += f"Total:                   {confidence_percent:2d} / 100\n"
+        except Exception as e:
+            logger.error(f"Error formatting confidence breakdown: {str(e)}")
     
     return {"markdown": markdown, "audit_response": audit_response}
 

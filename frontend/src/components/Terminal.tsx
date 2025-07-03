@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import FlowDiagram from './FlowDiagram';
 import { useOrchestrator } from '../hooks/useOrchestrator';
 

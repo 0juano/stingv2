@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Confidence Display</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 40px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .message {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .markdown-content {
+            line-height: 1.6;
+        }
+        pre {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            background: #333;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Confidence Display</h1>
+    
+    <div class="message">
+        <h2>Raw Markdown (what we send):</h2>
+        <pre><code>---
+*Consultado: BCRA*
+*&lt;confidence-score data='{"score": 85, "breakdown": {"base": {"achieved": 50, "possible": 50}, "specific_regulations": {"achieved": 20, "possible": 20}, "exact_articles": {"achieved": 15, "possible": 15}, "complete_procedures": {"achieved": 0, "possible": 10}, "recent_updates": {"achieved": 0, "possible": 5}}}'>Confianza: 85%&lt;/confidence-score>*</code></pre>
+    </div>
+
+    <div class="message">
+        <h2>Expected Display:</h2>
+        <div class="markdown-content">
+            <hr>
+            <p><em>Consultado: BCRA</em><br>
+            <em><span style="color: #2563eb; text-decoration: underline; cursor: help;">Confianza: 85%</span></em></p>
+        </div>
+    </div>
+
+    <div class="message">
+        <h2>What's happening:</h2>
+        <p>The confidence-score tag is being displayed as raw text instead of being parsed and replaced with the interactive component.</p>
+        
+        <h3>Solution:</h3>
+        <p>The MessageContent component is correctly extracting and parsing the confidence data, but the markdown rendering needs to handle the inline nature of the confidence score within the italic tags.</p>
+    </div>
+</body>
+</html>

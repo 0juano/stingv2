@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 interface FlowProps {
   flow: {
@@ -22,23 +23,23 @@ const styles = {
     padding: '1rem',
     fontFamily: '"Source Code Pro", monospace',
     width: '100%',
-    height: '240px',
+    height: '100%',  // Use full height of parent
     boxSizing: 'border-box' as const,
     display: 'flex',
     flexDirection: 'column' as const,
-    justifyContent: 'center',
+    justifyContent: 'space-between',  // Distribute space evenly
   },
   agentBox: {
     border: '2px solid #444',
     backgroundColor: '#2a2a2a',
-    padding: '0.375rem 0.75rem',
+    padding: '0.5rem 0.875rem',
     display: 'inline-block',
     minWidth: '110px',
     textAlign: 'center' as const,
     fontSize: '0.875rem',
   },
   agentBoxActive: {
-    borderColor: '#ff6b35',
+    border: '2px solid #ff6b35',
     backgroundColor: '#ff6b35',
     color: '#000',
     boxShadow: '0 0 10px #ff6b35',
@@ -46,7 +47,7 @@ const styles = {
   connector: {
     color: '#666',
     textAlign: 'center' as const,
-    margin: '0.25rem 0',
+    margin: '0.375rem 0',
     fontSize: '0.75rem',
     lineHeight: 1,
   },
@@ -54,6 +55,18 @@ const styles = {
 
 export default function FlowDiagramSimple({ flow }: FlowProps) {
   const isIdle = flow.currentStep === 'idle';
+  const [processingMessages, setProcessingMessages] = useState<string[]>([]);
+
+  // Add new processing message when it changes
+  useEffect(() => {
+    if (flow.processing && !processingMessages.includes(flow.processing)) {
+      setProcessingMessages(prev => [...prev, flow.processing!]);
+    }
+    // Clear messages when flow is idle/complete
+    if (isIdle || flow.complete) {
+      setProcessingMessages([]);
+    }
+  }, [flow.processing, isIdle, flow.complete]);
   
   const getAgentStatus = (agent: string) => {
     // When processing specific agents or in multi-agent mode
@@ -88,16 +101,17 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
 
   return (
     <div style={styles.container}>
-      <div style={{ textAlign: 'center', color: '#999', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
-        ═══════════ PROCESSING FLOW ═══════════
-      </div>
-
-      {/* User Input */}
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <div style={styles.agentBox}>
-          👤 USER
+      <div style={{ flex: '0 0 auto' }}>
+        <div style={{ textAlign: 'center', color: '#999', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+          ═══════════ PROCESSING FLOW ═══════════
         </div>
-      </div>
+
+        {/* User Input */}
+        <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+          <div style={styles.agentBox}>
+            👤 USER
+          </div>
+        </div>
 
       {/* Arrow down */}
       <div style={{ ...styles.connector, opacity: isIdle ? 0.5 : 1 }}>
@@ -105,7 +119,7 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
       </div>
 
       {/* Router */}
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
         <motion.div
           style={{
             ...styles.agentBox,
@@ -138,14 +152,14 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
           </div>
 
           {/* Agents */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '0.75rem' }}>
             {['bcra', 'comex', 'senasa'].map((agent) => (
               <motion.div
                 key={agent}
                 style={{
                   ...styles.agentBox,
                   ...(getAgentStatus(agent) === 'active' ? styles.agentBoxActive : {}),
-                  ...(getAgentStatus(agent) === 'selected' ? { borderColor: '#ff6b35' } : {}),
+                  ...(getAgentStatus(agent) === 'selected' ? { border: '2px solid #ff6b35' } : {}),
                   ...(getAgentStatus(agent) === 'idle' && !isIdle ? { opacity: 0.3 } : {}),
                   ...(isIdle ? { opacity: 0.5 } : {}),
                 }}
@@ -178,18 +192,43 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
               {getAgentEmoji('auditor')} AUDITOR
             </motion.div>
           </div>
+          
         </>
       )}
+      </div>
 
-      {/* Status Message */}
-      {flow.processing && (
-        <motion.div
-          style={{ textAlign: 'center', color: '#ff6b35', marginTop: '1rem' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          ⚡ {flow.processing}
-        </motion.div>
+      {/* Status Messages - Show all accumulated messages */}
+      {processingMessages.length > 0 && (
+        <div style={{ 
+          marginTop: '1rem', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '0.25rem',
+          flex: 1,  // Take remaining space
+          maxHeight: '200px',  // Increased from 120px
+          overflow: 'auto',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
+          {processingMessages.map((message, index) => (
+            <motion.div
+              key={index}
+              style={{ 
+                textAlign: 'center', 
+                color: index === processingMessages.length - 1 ? '#ff6b35' : '#999', 
+                fontSize: '0.875rem',
+                wordWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+                padding: '0 0.5rem'
+              }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              ⚡ {message}
+            </motion.div>
+          ))}
+        </div>
       )}
     </div>
   );
