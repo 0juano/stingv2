@@ -1,0 +1,82 @@
+# Railway Configuration for Bureaucracy Oracle
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+# Use Docker Compose for the entire stack
+builder = "NIXPACKS"
+watchPatterns = ["agents/**", "frontend/**", "docker-compose.yml"]
+
+[deploy]
+# Start command uses docker-compose
+startCommand = "docker-compose up"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Service-specific configurations
+[[services]]
+name = "router"
+port = 8001
+domains = ["router.up.railway.app"]
+healthcheckPath = "/health"
+
+[[services]]
+name = "bcra"
+port = 8002
+internal = true
+healthcheckPath = "/health"
+
+[[services]]
+name = "comex"
+port = 8003
+internal = true
+healthcheckPath = "/health"
+
+[[services]]
+name = "senasa"
+port = 8004
+internal = true
+healthcheckPath = "/health"
+
+[[services]]
+name = "auditor"
+port = 8005
+domains = ["auditor.up.railway.app"]
+healthcheckPath = "/health"
+
+[[services]]
+name = "frontend"
+port = 80
+domains = ["bureaucracy-oracle.up.railway.app", "frontend.up.railway.app"]
+healthcheckPath = "/"
+
+# Environment variable groups
+[environments]
+production = [
+    "OPENROUTER_API_KEY",
+    "TAVILY_API_KEY",
+    "ENABLE_SEARCH",
+    "VITE_API_BASE_URL",
+    "VITE_AUDITOR_URL"
+]
+
+# Cron jobs for monitoring
+[[crons]]
+name = "health-check"
+schedule = "*/5 * * * *"  # Every 5 minutes
+command = "curl -f http://localhost:8001/health || exit 1"
+
+[[crons]]
+name = "cost-monitor"
+schedule = "0 0 * * *"  # Daily at midnight
+command = "python scripts/cost-monitor.py"
+
+# Resource limits (Hobby plan)
+[resources]
+memory = "512MB"
+cpu = "0.5"
+
+# Auto-sleep configuration
+[deploys]
+sleepAfterInactiveSeconds = 600  # 10 minutes

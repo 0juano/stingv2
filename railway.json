@@ -1,0 +1,47 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "environments": {
+    "production": {
+      "build": {
+        "builder": "DOCKERFILE"
+      }
+    }
+  },
+  "services": [
+    {
+      "name": "router",
+      "root": "/agents/router",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      }
+    },
+    {
+      "name": "bcra", 
+      "root": "/agents/bcra",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      }
+    },
+    {
+      "name": "comex",
+      "root": "/agents/comex", 
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      }
+    },
+    {
+      "name": "senasa",
+      "root": "/agents/senasa",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      }
+    },
+    {
+      "name": "auditor",
+      "root": "/agents/auditor",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      }
+    }
+  ]
+}

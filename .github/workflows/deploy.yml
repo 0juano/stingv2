@@ -1,0 +1,160 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      
+      - name: Run tests
+        run: |
+          make test
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      
+      - name: Check test coverage
+        run: |
+          coverage_percent=$(pytest --cov=agents --cov-report=term | grep TOTAL | awk '{print $4}' | sed 's/%//')
+          if (( $(echo "$coverage_percent < 90" | bc -l) )); then
+            echo "Test coverage is below 90%: $coverage_percent%"
+            exit 1
+          fi
+          echo "Test coverage: $coverage_percent% ✓"
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [router, bcra, comex, senasa, auditor, frontend]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.service == 'frontend' && 'frontend/Dockerfile.prod' || format('agents/{0}/Dockerfile', matrix.service) }}
+          push: false
+          tags: bureaucracy-oracle-${{ matrix.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Save build time
+        run: echo "Build completed in $SECONDS seconds"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      
+      - name: Deploy to Railway
+        run: |
+          railway link $PROJECT_ID
+          railway up --detach
+        env:
+          RAILWAY_TOKEN: ${{ env.RAILWAY_TOKEN }}
+      
+      - name: Wait for deployment
+        run: sleep 60
+      
+      - name: Health check
+        run: |
+          # Check all services
+          services=("router" "bcra" "comex" "senasa" "auditor" "frontend")
+          all_healthy=true
+          
+          for service in "${services[@]}"; do
+            url="https://${service}.up.railway.app/health"
+            if curl -sf "$url" > /dev/null 2>&1; then
+              echo "✓ $service is healthy"
+            else
+              echo "✗ $service is unhealthy"
+              all_healthy=false
+            fi
+          done
+          
+          if [ "$all_healthy" = false ]; then
+            echo "Some services are unhealthy!"
+            exit 1
+          fi
+      
+      - name: Performance check
+        run: |
+          # Test Buenos Aires RTT
+          start_time=$(date +%s%N)
+          curl -s https://router.up.railway.app/health > /dev/null
+          end_time=$(date +%s%N)
+          
+          rtt_ms=$(( ($end_time - $start_time) / 1000000 ))
+          echo "RTT: ${rtt_ms}ms"
+          
+          if [ $rtt_ms -gt 170 ]; then
+            echo "Warning: RTT exceeds 170ms target"
+          fi
+      
+      - name: Tag release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "Deployed version: $VERSION"
+          # Tag in Railway (if Railway CLI supports it)
+          # railway tag $VERSION
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Deployment notification
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "✅ Deployment successful!"
+            echo "🌐 Frontend: https://frontend.up.railway.app"
+            echo "🔌 API: https://router.up.railway.app"
+          else
+            echo "❌ Deployment failed!"
+          fi

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-07-03T20:00:55Z",
+  "mode": "local",
+  "services_healthy": 5,
+  "services_total": 6,
+  "all_healthy": false,
+  "query_test": false
+}

@@ -184,6 +184,8 @@ make dev
 Create `.env` from `.env.example`:
 ```bash
 OPENROUTER_API_KEY=your_key_here
+TAVILY_API_KEY=your_tavily_key_here
+ENABLE_SEARCH=true
 ```
 
 ### Agent Configuration
@@ -197,6 +199,61 @@ Edit `agents.yml` to:
 
 Default models (can override in docker-compose.yml):
 - Router: `openai/gpt-4o-mini` (cost-efficient)
+
+## 🚀 Railway Deployment
+
+### Quick Deploy
+
+1. **Set up Railway account and install CLI:**
+```bash
+npm install -g @railway/cli
+railway login
+```
+
+2. **Deploy with our automation script:**
+```bash
+./infra/railway.sh <your-project-id>
+```
+
+3. **Configure environment variables in Railway dashboard:**
+- `OPENROUTER_API_KEY`
+- `TAVILY_API_KEY`
+- `ENABLE_SEARCH=true`
+
+### GitHub Actions CI/CD
+
+The project includes automated deployment:
+- Push to `main` → Automatic deployment
+- Tag `v*` → Production release
+- All tests must pass (≥90% coverage)
+
+### Monitoring & Performance
+
+```bash
+# Check latency from Buenos Aires
+./scripts/ping-buenos-aires.sh
+
+# Monitor costs (runs daily)
+./scripts/cost-monitor.py
+
+# Health check all services
+./scripts/health-check-all.sh
+```
+
+### Production URLs
+- Frontend: `https://bureaucracy-oracle.up.railway.app`
+- API Router: `https://router.up.railway.app`
+- Health Dashboard: Railway project dashboard
+
+### Cost Optimization
+- Auto-sleep after 10 minutes idle
+- Target: <$20/month on Hobby plan
+- Monitor with `cost-monitor.py`
+
+### Performance Targets
+- Average RTT from Buenos Aires: <170ms
+- p95 API response time: <500ms
+- Multi-agent queries: <8s
 - Agents: `openai/gpt-4o-mini`
 - Auditor: `openai/gpt-4o` (higher quality for final formatting)
 
@@ -281,9 +338,9 @@ Response:
 }
 ```
 
-## 🚢 Deployment
+## 🚢 Deployment Options
 
-### Using Docker
+### Local Development
 
 ```bash
 # Build and run
@@ -296,12 +353,15 @@ docker-compose logs -f
 docker-compose down
 ```
 
-### Using Railway/Fly.io
+### Railway (Recommended)
 
-1. Push to GitHub
-2. Connect repository
-3. Add environment variables
-4. Deploy
+See [Railway Deployment](#-railway-deployment) section above for detailed instructions.
+
+### Other Platforms
+
+- **Render**: Good Docker support, free tier available
+- **Fly.io**: Excellent for global distribution
+- **DigitalOcean App Platform**: Enterprise-ready but more expensive
 
 ## 🐛 Troubleshooting
 
