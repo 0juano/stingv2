@@ -2,17 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install httpx
 
-# Copy all code
+# Install Python dependencies without gcc
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir httpx
+
+# Copy all application code
 COPY agents/ ./agents/
 COPY orchestrator.py .
 COPY orchestrator_multiagent.py .
@@ -23,6 +20,10 @@ COPY start.sh .
 # Make startup script executable
 RUN chmod +x /app/start.sh
 
-EXPOSE 8000
+# Expose port for Railway
+EXPOSE ${PORT:-8000}
+
+# Use the PORT environment variable from Railway
+ENV PORT=${PORT:-8000}
 
 CMD ["/app/start.sh"]
