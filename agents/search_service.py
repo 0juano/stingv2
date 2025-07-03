@@ -198,25 +198,59 @@ class TavilySearchService:
         if search_results.get("error") or not search_results.get("sources"):
             return ""
         
-        lines = ["=== INFORMACIÓN ACTUALIZADA ===\n"]
+        import re
         
+        lines = ["📊 INFORMACIÓN ACTUALIZADA DE BÚSQUEDA WEB:"]
+        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen:\n")
+        
+        # Extract and highlight numeric values from all sources
+        all_percentages = set()
+        all_amounts = set()
+        
+        for source in search_results.get("sources", [])[:3]:
+            content = source.get("content", "")
+            # Extract percentages (e.g., 16%, 10.5%)
+            percentages = re.findall(r'(\d+(?:\.\d+)?%)', content)
+            all_percentages.update(percentages)
+            
+            # Extract USD amounts
+            usd_amounts = re.findall(r'USD?\s*(\d+(?:\.\d+)?)', content)
+            all_amounts.update(usd_amounts)
+        
+        # Show extracted values prominently
+        if all_percentages:
+            lines.append("✓ PORCENTAJES ENCONTRADOS: " + ", ".join(sorted(all_percentages)))
+        if all_amounts:
+            lines.append("✓ MONTOS USD ENCONTRADOS: " + ", ".join(sorted(all_amounts)[:5]))
+        
+        if all_percentages or all_amounts:
+            lines.append("")
+        
+        # Add summary if available
         if search_results.get("summary"):
             lines.append(f"RESUMEN: {search_results['summary']}\n")
         
+        # Add key facts
         if search_results.get("key_facts"):
             lines.append("DATOS CLAVE:")
             lines.extend(f"• {fact}" for fact in search_results["key_facts"])
             lines.append("")
         
+        # Add sources with highlighted values
         if search_results.get("sources"):
-            lines.append("FUENTES:")
+            lines.append("FUENTES VERIFICADAS:")
             for i, source in enumerate(search_results["sources"][:3], 1):
-                lines.append(f"{i}. {source['title']}")
-                lines.append(f"   {source['url']}")
-                lines.append(f"   {source['content'][:150]}...\n")
+                lines.append(f"\n{i}. {source['title']}")
+                lines.append(f"   URL: {source['url']}")
+                
+                # Highlight numeric values in content preview
+                content_preview = source['content'][:200]
+                # Bold percentages in content
+                content_preview = re.sub(r'(\d+(?:\.\d+)?%)', r'**\1**', content_preview)
+                lines.append(f"   Contenido: {content_preview}...")
         
-        lines.append(f"Actualizado: {search_results.get('last_updated', 'N/A')}")
-        lines.append("=== FIN INFORMACIÓN ===")
+        lines.append(f"\nActualizado: {search_results.get('last_updated', 'N/A')}")
+        lines.append("=== FIN INFORMACIÓN DE BÚSQUEDA ===")
         
         return "\n".join(lines)
 

@@ -73,6 +73,17 @@ Si recibes contexto adicional de búsquedas web:
    - Si hay cambios en aranceles o procedimientos, usa los más recientes
    - Verifica la vigencia de las resoluciones citadas
 
+## Precisión en Valores Numéricos
+
+Cuando proporciones información numérica (aranceles, límites, porcentajes):
+1. Si tienes datos de búsqueda web, usa EXACTAMENTE los valores encontrados
+2. NUNCA redondees porcentajes (ej: si la búsqueda dice 16%, NO digas 15%)
+3. Si no hay búsqueda disponible y debes usar tu conocimiento base:
+   - Indica que es información aproximada
+   - Reduce la confianza apropiadamente
+4. Siempre prioriza los valores de búsqueda sobre tu conocimiento previo
+5. Para aranceles: si la búsqueda muestra "16%" úsalo exacto, no aproximes a "15%"
+
 ## Formato de salida (IMPORTANTE: devuelve SOLO JSON)
 
 {
