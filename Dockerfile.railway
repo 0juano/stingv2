@@ -1,0 +1,37 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install httpx
+
+# Copy all code
+COPY agents/ ./agents/
+COPY orchestrator.py .
+COPY orchestrator_multiagent.py .
+COPY agents.yml .
+COPY proxy.py .
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+cd /app\n\
+# Start all services in background\n\
+cd agents/router && uvicorn main:app --host 0.0.0.0 --port 8001 &\n\
+cd /app/agents/bcra && uvicorn main:app --host 0.0.0.0 --port 8002 &\n\
+cd /app/agents/comex && uvicorn main:app --host 0.0.0.0 --port 8003 &\n\
+cd /app/agents/senasa && uvicorn main:app --host 0.0.0.0 --port 8004 &\n\
+cd /app/agents/auditor && uvicorn main:app --host 0.0.0.0 --port 8005 &\n\
+sleep 5\n\
+# Start proxy on Railway PORT\n\
+cd /app && python proxy.py' > /start.sh && chmod +x /start.sh
+
+EXPOSE 8000
+
+CMD ["/start.sh"]
