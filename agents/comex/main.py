@@ -10,7 +10,7 @@ from typing import Dict, Any, Optional
 import logging
 import sys
 sys.path.append('/app')
-from cost_calculator import calculate_cost
+from cost_calculator import calculate_cost, TAVILY_SEARCH_COST, TAVILY_BASIC_COST
 sys.path.append('/app/agents')
 try:
     from search_service import get_search_service
@@ -77,13 +77,26 @@ async def answer(query: QueryRequest):
     
     # Check if search is needed and enabled
     search_results = None
+    search_count = 0
     if get_search_service:
         try:
             search_service = get_search_service()
-            if search_service.needs_search(query.question, agent_name):
-                logger.info(f"Search triggered for question: {query.question[:50]}...")
-                import asyncio
-                search_results = await search_service.search(query.question, agent_name)
+            search_depth = search_service.needs_search(query.question, agent_name)
+            
+            if search_depth != "none":
+                # Always do a quick search first
+                logger.info(f"Quick search for: {query.question[:50]}...")
+                quick_results = await search_service.quick_search(query.question, agent_name)
+                search_results = quick_results
+                search_count = 1
+                
+                if search_depth == "full":
+                    # Upgrade to full search for priority topics
+                    logger.info(f"Upgrading to full search for: {query.question[:50]}...")
+                    full_results = await search_service.search(query.question, agent_name)
+                    search_results = full_results  # Use full results
+                    search_count = 2
+                
                 logger.info(f"Search completed with {len(search_results.get('sources', []))} sources")
         except Exception as e:
             logger.error(f"Search error: {str(e)}")
@@ -125,7 +138,17 @@ async def answer(query: QueryRequest):
             
             # Calculate cost from usage data
             usage = result.get("usage", {})
-            cost = calculate_cost(model, usage)
+            llm_cost = calculate_cost(model, usage)
+            
+            # Add search cost if search was performed
+            search_cost = 0.0
+            if search_results and not search_results.get("error"):
+                if search_count == 1:
+                    search_cost = TAVILY_BASIC_COST  # $0.004 for quick search only
+                elif search_count == 2:
+                    search_cost = TAVILY_BASIC_COST + TAVILY_SEARCH_COST  # $0.019 for both
+            
+            total_cost = llm_cost + search_cost
             
             # Parse the assistant's response
             try:
@@ -141,7 +164,7 @@ async def answer(query: QueryRequest):
             if search_results and not search_results.get("error"):
                 answer_content["_search_metadata"] = {
                     "used": True,
-                    "count": 1,  # One search was performed
+                    "count": search_count,  # Track actual number of searches
                     "sources_consulted": search_results.get("sources_consulted", [])
                 }
             else:
@@ -155,7 +178,7 @@ async def answer(query: QueryRequest):
                 answer=answer_content,
                 agent=agent_name,
                 model=model,
-                cost=cost
+                cost=total_cost
             )
             
     except httpx.HTTPStatusError as e:

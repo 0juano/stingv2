@@ -13,6 +13,10 @@ PRICING = {
     # Add more models as needed
 }
 
+# Tavily search pricing (as of January 2025)
+TAVILY_BASIC_COST = 0.004   # $0.004 per basic search (1 credit) 
+TAVILY_SEARCH_COST = 0.015  # $0.015 per advanced search (2 credits)
+
 def calculate_cost(model: str, usage: dict) -> float:
     """
     Calculate cost based on model and usage data

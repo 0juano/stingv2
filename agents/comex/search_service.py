@@ -64,12 +64,21 @@ class TavilySearchService:
         if self.enabled and not self.api_key:
             raise ValueError("Search enabled but TAVILY_API_KEY not found")
     
-    def needs_search(self, question: str, agent_type: str) -> bool:
-        """Check if search is needed based on triggers"""
+    def needs_search(self, question: str, agent_type: str) -> str:
+        """Determine search depth needed: 'none', 'quick', or 'full'"""
         if not self.enabled:
-            return False
+            return "none"
         
         question_lower = question.lower()
+        
+        # High priority categories that always need search
+        ALWAYS_SEARCH_CATEGORIES = [
+            "import", "export", "arancel", "límite", "requisito",
+            "tarifa", "impuesto", "licencia", "certificado"
+        ]
+        
+        # Check for high-value/complex topics
+        has_priority_category = any(cat in question_lower for cat in ALWAYS_SEARCH_CATEGORIES)
         
         # Check temporal triggers
         has_temporal = any(t in question_lower for t in TEMPORAL_TRIGGERS)
@@ -78,9 +87,17 @@ class TavilySearchService:
         agent_triggers = AGENT_SEARCH_CONFIG.get(agent_type, {}).get("triggers", [])
         has_agent_trigger = any(t in question_lower for t in agent_triggers)
         
-        return has_temporal or has_agent_trigger
+        # Determine search depth
+        if has_priority_category or has_temporal or has_agent_trigger:
+            return "full"  # Full search with 5 results
+        else:
+            return "quick"  # Quick search with 1 result
     
-    async def search(self, query: str, agent_type: str, max_results: int = 5) -> Dict[str, Any]:
+    async def quick_search(self, query: str, agent_type: str) -> Dict[str, Any]:
+        """Perform a quick search with minimal results"""
+        return await self.search(query, agent_type, max_results=1, search_depth="basic")
+    
+    async def search(self, query: str, agent_type: str, max_results: int = 5, search_depth: str = "advanced") -> Dict[str, Any]:
         """Perform search with caching and agent optimization"""
         if not self.enabled:
             return {"error": True, "message": "Search disabled", "results": []}
@@ -96,7 +113,7 @@ class TavilySearchService:
         
         # Execute search
         try:
-            results = await self._execute_search(enhanced_query, config, max_results)
+            results = await self._execute_search(enhanced_query, config, max_results, search_depth)
             processed = self._process_results(results, agent_type)
             
             # Cache results
@@ -122,12 +139,12 @@ class TavilySearchService:
         
         return enhanced
     
-    async def _execute_search(self, query: str, config: Dict, max_results: int) -> Dict:
+    async def _execute_search(self, query: str, config: Dict, max_results: int, search_depth: str = "advanced") -> Dict:
         """Execute Tavily API search"""
         params = {
             "api_key": self.api_key,
             "query": query,
-            "search_depth": "advanced",
+            "search_depth": search_depth,  # "basic" for quick, "advanced" for full
             "max_results": max_results,
             "include_answer": True,
             "include_raw_content": False,
@@ -143,6 +160,7 @@ class TavilySearchService:
     def _process_results(self, raw_results: Dict, agent_type: str) -> Dict[str, Any]:
         """Process and extract key information"""
         import re
+        from urllib.parse import urlparse
         
         results = raw_results.get("results", [])[:5]
         answer = raw_results.get("answer", "")
@@ -151,7 +169,8 @@ class TavilySearchService:
             "summary": answer,
             "sources": [],
             "key_facts": [],
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
+            "sources_consulted": []  # Track actual sources for display
         }
         
         for result in results:
@@ -162,6 +181,19 @@ class TavilySearchService:
                 "score": result.get("score", 0)
             }
             processed["sources"].append(source)
+            
+            # Extract domain and key info for display
+            if result.get("url"):
+                domain = urlparse(result["url"]).netloc
+                # Extract regulation numbers from title or content
+                text = f"{result.get('title', '')} {result.get('content', '')}"
+                regulations = re.findall(r'(?:Resolución|Comunicación|Decreto|NCM)\s*(?:N°|Nº|A)?\s*[\d\./-]+', text)
+                
+                if regulations:
+                    for reg in regulations[:2]:  # Max 2 per source
+                        processed["sources_consulted"].append(f"{domain} ({reg})")
+                else:
+                    processed["sources_consulted"].append(domain)
             
             # Extract agent-specific facts
             content = source["content"].lower()
@@ -183,25 +215,59 @@ class TavilySearchService:
         if search_results.get("error") or not search_results.get("sources"):
             return ""
         
-        lines = ["=== INFORMACIÓN ACTUALIZADA ===\n"]
+        import re
         
+        lines = ["📊 INFORMACIÓN ACTUALIZADA DE BÚSQUEDA WEB:"]
+        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen:\n")
+        
+        # Extract and highlight numeric values from all sources
+        all_percentages = set()
+        all_amounts = set()
+        
+        for source in search_results.get("sources", [])[:3]:
+            content = source.get("content", "")
+            # Extract percentages (e.g., 16%, 10.5%)
+            percentages = re.findall(r'(\d+(?:\.\d+)?%)', content)
+            all_percentages.update(percentages)
+            
+            # Extract USD amounts
+            usd_amounts = re.findall(r'USD?\s*(\d+(?:\.\d+)?)', content)
+            all_amounts.update(usd_amounts)
+        
+        # Show extracted values prominently
+        if all_percentages:
+            lines.append("✓ PORCENTAJES ENCONTRADOS: " + ", ".join(sorted(all_percentages)))
+        if all_amounts:
+            lines.append("✓ MONTOS USD ENCONTRADOS: " + ", ".join(sorted(all_amounts)[:5]))
+        
+        if all_percentages or all_amounts:
+            lines.append("")
+        
+        # Add summary if available
         if search_results.get("summary"):
             lines.append(f"RESUMEN: {search_results['summary']}\n")
         
+        # Add key facts
         if search_results.get("key_facts"):
             lines.append("DATOS CLAVE:")
             lines.extend(f"• {fact}" for fact in search_results["key_facts"])
             lines.append("")
         
+        # Add sources with highlighted values
         if search_results.get("sources"):
-            lines.append("FUENTES:")
+            lines.append("FUENTES VERIFICADAS:")
             for i, source in enumerate(search_results["sources"][:3], 1):
-                lines.append(f"{i}. {source['title']}")
-                lines.append(f"   {source['url']}")
-                lines.append(f"   {source['content'][:150]}...\n")
+                lines.append(f"\n{i}. {source['title']}")
+                lines.append(f"   URL: {source['url']}")
+                
+                # Highlight numeric values in content preview
+                content_preview = source['content'][:200]
+                # Bold percentages in content
+                content_preview = re.sub(r'(\d+(?:\.\d+)?%)', r'**\1**', content_preview)
+                lines.append(f"   Contenido: {content_preview}...")
         
-        lines.append(f"Actualizado: {search_results.get('last_updated', 'N/A')}")
-        lines.append("=== FIN INFORMACIÓN ===")
+        lines.append(f"\nActualizado: {search_results.get('last_updated', 'N/A')}")
+        lines.append("=== FIN INFORMACIÓN DE BÚSQUEDA ===")
         
         return "\n".join(lines)
 

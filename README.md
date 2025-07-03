@@ -34,6 +34,31 @@ make dev
 python3 orchestrator.py "¿Cómo exportar aceitunas a Grecia?"
 ```
 
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 19** + TypeScript
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **Lucide React** - Icons
+
+### Backend
+- **FastAPI** (Python) - Web framework
+- **Docker Compose** - Container orchestration
+- **Microservices Architecture** - 5 independent services
+
+### AI/ML
+- **OpenRouter API** - Model provider
+- **GPT-4o-mini** - Router and agents
+- **GPT-4o** - Auditor service
+- **Tavily API** - Web search integration
+
+### Development
+- **Make** - Build automation
+- **ESLint** - Frontend linting
+- **Python** - Backend language
+
 ## 🏗️ Architecture
 
 ```

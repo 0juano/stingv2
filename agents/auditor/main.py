@@ -400,11 +400,16 @@ async def format_response(audit_response: AuditResponse):
     # Get search count
     busquedas = audit_response.metadata.get('busquedas_web', 0)
     
-    # Always show search status
-    if busquedas > 0:
-        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *{busquedas} búsqueda{'s' if busquedas != 1 else ''} web*\n"
-    else:
+    # Always show search status with detail
+    if busquedas == 0:
         markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *Sin búsquedas web*\n"
+    elif busquedas == 1:
+        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *1 búsqueda rápida*\n"
+    elif busquedas == 2:
+        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *2 búsquedas (rápida + completa)*\n"
+    else:
+        # For multi-agent cases where total might be higher
+        markdown += f"\n\n---\n*Consultado: {agents_text}* | 🔍 *{busquedas} búsquedas web*\n"
     
     # Include confidence score
     confidence = audit_response.metadata.get('confianza', 0.85)
@@ -468,6 +473,27 @@ async def format_response(audit_response: AuditResponse):
             
             markdown += f"{'─' * 40}\n"
             markdown += f"Total:                   {confidence_percent:2d} / 100"
+            
+            # Add cost information if web searches were performed
+            busquedas = audit_response.metadata.get('busquedas_web', 0)
+            if busquedas > 0:
+                # Calculate Tavily search cost based on number of searches
+                # Each search costs $0.004 (basic) for quick + $0.015 (advanced) for full
+                # If busquedas == 1, it's just a quick search ($0.004)
+                # If busquedas == 2, it's quick + full ($0.019)
+                # For multi-agent, multiply by number of searches
+                search_cost = 0.0
+                if busquedas == 1:
+                    search_cost = 0.004  # Quick search only
+                elif busquedas == 2:
+                    search_cost = 0.019  # Quick + full search
+                else:
+                    # For multi-agent cases, assume mix of quick and full searches
+                    search_cost = busquedas * 0.0095  # Average of quick and full
+                
+                markdown += f"\n\n💰 **Costo de búsquedas web:**\n"
+                markdown += f"Búsquedas realizadas:    {busquedas}\n"
+                markdown += f"Costo Tavily:            ${search_cost:.4f}"
         except Exception as e:
             logger.error(f"Error formatting confidence breakdown: {str(e)}")
     

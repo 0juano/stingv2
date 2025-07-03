@@ -1,5 +1,9 @@
 """Cost calculator for OpenRouter API usage"""
 
+# Tavily Search API pricing
+TAVILY_SEARCH_COST = 0.015  # $0.015 per advanced search
+TAVILY_BASIC_COST = 0.004   # $0.004 per basic search (approximate)
+
 # Pricing per million tokens (as of January 2025)
 PRICING = {
     "openai/gpt-4o-mini": {
