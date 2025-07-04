@@ -6,6 +6,25 @@ kanban-plugin: board
 
 ## 📋 Backlog
 
+### Quick Wins (This Weekend)
+- [ ] **Get a domain name** ($1-10) - oraculo.xyz or burocracia.app
+- [ ] **Add basic analytics** - Track queries, agent usage, visitor origins
+- [ ] **Share with 5 test users** - Post in Argentina Reddit/Discord/WhatsApp
+- [ ] **Add "Examples" button** - Show common queries users can try
+
+### Next Week Improvements
+- [ ] **Monitor API costs daily** - Add cron job for cost-monitor.py
+- [ ] **Add error recovery** - Handle OpenRouter downtime gracefully
+- [ ] **Cache common queries** - Save API costs on repeated questions
+- [ ] **Improve error messages** - User-friendly messages in Spanish
+
+### Growth Features
+- [ ] **Create landing page** - Explain what the oracle does
+- [ ] **Add share buttons** - Let users share helpful responses
+- [ ] **Implement feedback system** - "¿Fue útil? 👍👎"
+- [ ] **Make mobile PWA** - Add to home screen capability
+- [ ] **Add visitor counter** - Show "X consultas respondidas"
+
 
 
 ## Future Features
@@ -39,19 +58,10 @@ kanban-plugin: board
 - [ ] Add health checks and auto-recovery
 - [ ] **Add HTTPS with Let's Encrypt** 🔒
 - [ ] **Get cheap domain name** (namecheap ~$1/year for .xyz)
-- [ ] **Add favicon for browser tab** 🎨
 
 
 ## 🚧 In Progress
 
-- [ ] **Deploy website to Railway (or similar hosting)** 🚀 ^zp9c1j
-	  - [ ] Set up Railway account
-	  - [ ] Configure environment variables (OPENROUTER_API_KEY, TAVILY_API_KEY, ENABLE_SEARCH=true)
-	  - [ ] Deploy backend services (5 containers: router, bcra, comex, senasa, auditor)
-	  - [ ] Deploy frontend React app
-	  - [ ] Set up custom domain (optional)
-	  - [ ] Configure SSL/HTTPS
-	  **Note**: Railway recommended for easy Docker Compose deployment. Alternatives: Render, Fly.io, DigitalOcean App Platform
 
 
 ## 🧪 Testing/Review
@@ -60,7 +70,17 @@ kanban-plugin: board
 
 ## ✅ Done
 
+## Deployment & Production
 
+- [x] **Deploy to DigitalOcean** 🚀
+	  - [x] Set up Docker 1-Click Droplet ($12/month)
+	  - [x] Configure all 6 services with Docker Compose
+	  - [x] Set up environment variables
+	  - [x] Configure firewall rules
+	  - [x] Deploy at http://147.182.248.187
+	  - [x] Add favicon and Spanish title
+	  - [x] Update header to "ORÁCULO DE LA BUROCRACIA"
+	  **Completed**: July 4, 2025 - Live in production!
 
 ## Core Infrastructure
 
