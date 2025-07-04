@@ -1,111 +1,108 @@
-# Production overrides for docker-compose.yml
-# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Production configuration for Proyecto Sting
+# This file extends docker-compose.yml with production-specific settings
 
 services:
   # Router service
   router:
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
+    build: ./agents/router
+    container_name: router
+    ports:
+      - "8001:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - ROUTER_BIAS_BCRA=${ROUTER_BIAS_BCRA:-1.2}  # Boost BCRA by 20%
+      - ROUTER_BIAS_COMEX=${ROUTER_BIAS_COMEX:-0.9}  # Reduce Comex by 10%
+      - ROUTER_BIAS_SENASA=${ROUTER_BIAS_SENASA:-1.0}  # Keep Senasa neutral
+    volumes:
+      - ./agents.yml:/app/agents.yml:ro
+      - ./agents/router/prompt.md:/app/prompt.md:ro
+    networks:
+      - oracle-network
+    restart: unless-stopped
 
   # BCRA Agent
   bcra:
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
+    build: ./agents/bcra
+    container_name: bcra
+    ports:
+      - "8002:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
+      - AGENT_NAME=bcra
+    networks:
+      - oracle-network
+    restart: unless-stopped
 
   # Comex Agent
   comex:
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
+    build: ./agents/comex
+    container_name: comex
+    ports:
+      - "8003:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
+      - AGENT_NAME=comex
+    networks:
+      - oracle-network
+    restart: unless-stopped
 
   # Senasa Agent
   senasa:
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
+    build: ./agents/senasa
+    container_name: senasa
+    ports:
+      - "8004:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4o-mini
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - ENABLE_SEARCH=${ENABLE_SEARCH:-false}
+      - AGENT_NAME=senasa
+    networks:
+      - oracle-network
+    restart: unless-stopped
 
   # Auditor service
   auditor:
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
+    build: ./agents/auditor
+    container_name: auditor
+    ports:
+      - "8005:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=openai/gpt-4.1  # Latest model for auditing
+      - AGENT_NAME=auditor
+    networks:
+      - oracle-network
+    restart: unless-stopped
 
-  # Frontend
+  # Frontend - Production configuration with server IP
   frontend:
     build:
       context: ./frontend
       args:
-        - VITE_API_BASE_URL=http://147.182.248.187:8001
-        - VITE_BCRA_URL=http://147.182.248.187:8002
-        - VITE_COMEX_URL=http://147.182.248.187:8003
-        - VITE_SENASA_URL=http://147.182.248.187:8004
-        - VITE_AUDITOR_URL=http://147.182.248.187:8005
+        VITE_API_BASE_URL: http://147.182.248.187:8001
+        VITE_BCRA_URL: http://147.182.248.187:8002
+        VITE_COMEX_URL: http://147.182.248.187:8003
+        VITE_SENASA_URL: http://147.182.248.187:8004
+        VITE_AUDITOR_URL: http://147.182.248.187:8005
     container_name: frontend
     ports:
-      - "80:80"  # Use port 80 for production
-    environment:
-      - VITE_API_BASE_URL=http://147.182.248.187:8001
+      - "80:80"  # Nginx serves on port 80
     networks:
       - oracle-network
     depends_on:
       - router
       - auditor
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
+    restart: unless-stopped
+
+networks:
+  oracle-network:
+    driver: bridge
