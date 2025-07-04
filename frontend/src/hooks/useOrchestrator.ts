@@ -13,10 +13,11 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
-const agentPorts = {
-  bcra: import.meta.env.VITE_BCRA_PORT || 8002,
-  comex: import.meta.env.VITE_COMEX_PORT || 8003,
-  senasa: import.meta.env.VITE_SENASA_PORT || 8004
+// For production (Render), we'll use full URLs. For local dev, construct from ports.
+const agentUrls = {
+  bcra: import.meta.env.VITE_BCRA_URL || `http://localhost:${import.meta.env.VITE_BCRA_PORT || 8002}`,
+  comex: import.meta.env.VITE_COMEX_URL || `http://localhost:${import.meta.env.VITE_COMEX_PORT || 8003}`,
+  senasa: import.meta.env.VITE_SENASA_URL || `http://localhost:${import.meta.env.VITE_SENASA_PORT || 8004}`
 };
 
 interface FlowUpdate {
@@ -92,11 +93,11 @@ export function useOrchestrator() {
         });
         
         const agentPromises = agents.map(async (agent: string) => {
-          const agentPort = agentPorts[agent as keyof typeof agentPorts] || 8002;
+          const agentUrl = agentUrls[agent as keyof typeof agentUrls];
           
           try {
             const response = await axios.post(
-              `http://localhost:${agentPort}/answer`,
+              `${agentUrl}/answer`,
               { question },
               { timeout: 35000 } // 35 seconds timeout for agents
             );
@@ -123,7 +124,7 @@ export function useOrchestrator() {
       } else {
         // Single agent case - backwards compatibility
         const singleAgent = agents[0];
-        const agentPort = agentPorts[singleAgent as keyof typeof agentPorts] || 8002;
+        const agentUrl = agentUrls[singleAgent as keyof typeof agentUrls];
 
         onFlowUpdate?.({ 
           currentStep: singleAgent,
@@ -133,7 +134,7 @@ export function useOrchestrator() {
         });
 
         const agentResponse = await axios.post(
-          `http://localhost:${agentPort}/answer`,
+          `${agentUrl}/answer`,
           { question },
           { timeout: 35000 } // 35 seconds timeout for single agent
         );

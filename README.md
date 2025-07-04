@@ -353,15 +353,43 @@ docker-compose logs -f
 docker-compose down
 ```
 
-### Railway (Recommended)
+### DigitalOcean Droplet (Recommended) 🚀
 
-See [Railway Deployment](#-railway-deployment) section above for detailed instructions.
+**Fastest deployment: 10 minutes, $12/month**
+
+```bash
+# 1. Create Docker 1-Click Droplet on DigitalOcean
+# 2. SSH into your server
+ssh root@YOUR_DROPLET_IP
+
+# 3. Set API keys
+export OPENROUTER_API_KEY="your-key"
+export TAVILY_API_KEY="your-key"
+export GITHUB_REPO_URL="https://github.com/yourusername/stingv2.git"
+
+# 4. Deploy
+curl -o deploy.sh https://raw.githubusercontent.com/yourusername/stingv2/main/infra/deploy.sh
+chmod +x deploy.sh
+./deploy.sh
+
+# 5. Access your app
+# Frontend: http://YOUR_DROPLET_IP
+# API: http://YOUR_DROPLET_IP:8001
+```
+
+See [DIGITALOCEAN_DEPLOY_STEPS.md](./DIGITALOCEAN_DEPLOY_STEPS.md) for detailed step-by-step instructions.
+
+**Update deployment:**
+```bash
+cd /opt/proyecto-sting
+./infra/update.sh
+```
 
 ### Other Platforms
 
-- **Render**: Good Docker support, free tier available
-- **Fly.io**: Excellent for global distribution
-- **DigitalOcean App Platform**: Enterprise-ready but more expensive
+- **Render**: $42/month for all services, requires configuration changes
+- **Railway**: Similar pricing to Render, can be complex for microservices
+- **Fly.io**: Good for single containers, complex for multi-service apps
 
 ## 🐛 Troubleshooting
 
