@@ -36,6 +36,10 @@ export function useOrchestrator() {
     question: string,
     onFlowUpdate?: (flow: FlowUpdate) => void
   ) => {
+    console.log('[useOrchestrator] Starting processQuery with question:', question);
+    console.log('[useOrchestrator] API_BASE_URL:', API_BASE_URL);
+    console.log('[useOrchestrator] Agent URLs:', agentUrls);
+    
     setIsLoading(true);
     setError(null);
     
@@ -43,9 +47,11 @@ export function useOrchestrator() {
 
     try {
       // Step 1: Route the query
+      console.log('[useOrchestrator] Step 1: Routing query to:', `${API_BASE_URL}/route`);
       onFlowUpdate?.({ currentStep: 'router', processing: getAnalyzingQuery() });
       
       const routeResponse = await axios.post(`${API_BASE_URL}/route`, { question }, { timeout: 10000 });
+      console.log('[useOrchestrator] Route response:', routeResponse.data);
       const routing = routeResponse.data.decision;
       
       // Handle both old and new routing formats
@@ -68,6 +74,8 @@ export function useOrchestrator() {
       // If out of scope, return early
       if (!agents.length || primaryAgent === 'out_of_scope') {
         const duration = (Date.now() - startTime) / 1000; // Duration in seconds
+        console.log('[useOrchestrator] Query is out of scope. Returning early.');
+        console.log('[useOrchestrator] Agents:', agents, 'Primary agent:', primaryAgent);
         
         return {
           success: false,
@@ -92,8 +100,10 @@ export function useOrchestrator() {
           stepData: { agentCount: agents.length, agents }
         });
         
+        console.log('[useOrchestrator] Making parallel calls to agents:', agents);
         const agentPromises = agents.map(async (agent: string) => {
           const agentUrl = agentUrls[agent as keyof typeof agentUrls];
+          console.log(`[useOrchestrator] Calling ${agent} at: ${agentUrl}/answer`);
           
           try {
             const response = await axios.post(
@@ -101,9 +111,10 @@ export function useOrchestrator() {
               { question },
               { timeout: 35000 } // 35 seconds timeout for agents
             );
+            console.log(`[useOrchestrator] ${agent} response received:`, response.data);
             return { agent, response: response.data };
           } catch (error) {
-            console.error(`Error calling ${agent}:`, error);
+            console.error(`[useOrchestrator] Error calling ${agent}:`, error);
             return { agent, response: { answer: { error: `Failed to contact ${agent}` }, cost: 0 } };
           }
         });
@@ -227,18 +238,42 @@ export function useOrchestrator() {
       };
 
     } catch (err: any) {
-      console.error('Orchestrator error:', err);
+      console.error('[useOrchestrator] Orchestrator error:', err);
+      console.error('[useOrchestrator] Error type:', err.name);
+      console.error('[useOrchestrator] Error message:', err.message);
+      console.error('[useOrchestrator] Error stack:', err.stack);
+      
+      if (err.response) {
+        console.error('[useOrchestrator] API Error Response:', {
+          status: err.response.status,
+          statusText: err.response.statusText,
+          data: err.response.data,
+          headers: err.response.headers
+        });
+      }
+      
       setError(err.message || 'Error processing query');
       
       const duration = (Date.now() - startTime) / 1000; // Duration in seconds
       
+      // Provide more specific error messages
+      let errorMessage = 'No se pudo procesar la consulta.';
+      if (err.response?.status === 401) {
+        errorMessage = 'Error de autenticación. Verifica la API key de OpenRouter.';
+      } else if (err.code === 'ERR_NETWORK') {
+        errorMessage = 'Error de conexión. Verifica que los servicios estén activos.';
+      } else if (err.response?.status >= 500) {
+        errorMessage = 'Error del servidor. Intenta nuevamente.';
+      }
+      
       return {
         success: false,
-        response: `❌ Error: ${err.message || 'No se pudo procesar la consulta. Verifica que los servicios estén activos.'}`,
+        response: `❌ Error: ${err.message || errorMessage}`,
         totalCost: 0,
         duration
       };
     } finally {
+      console.log('[useOrchestrator] Process complete. Setting loading to false.');
       setIsLoading(false);
     }
   };

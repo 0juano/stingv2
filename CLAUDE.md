@@ -75,6 +75,22 @@ If agents return INSUFFICIENT_CONTEXT:
 - Implement caching for frequently asked questions
 - Add webhook for Slack/Discord integration
 
+## Local vs Production Deployment
+
+### Local Development
+```bash
+# docker-compose.override.yml is automatically loaded
+docker-compose up --build
+```
+
+### Production Deployment  
+```bash
+# On the server, rename override file and use prod config
+mv docker-compose.override.yml docker-compose.override.yml.bak
+cp docker-compose.prod.yml docker-compose.override.yml
+docker-compose up --build -d
+```
+
 ## DigitalOcean/Docker Deployment Quirks
 
 ### Common Issues and Solutions

@@ -1,0 +1,13 @@
+# Local development overrides
+# This file is automatically loaded by docker-compose and overrides the main docker-compose.yml
+# For production, rename/remove this file and use docker-compose.prod.yml
+
+services:
+  frontend:
+    build:
+      args:
+        VITE_API_BASE_URL: http://localhost:8001
+        VITE_BCRA_URL: http://localhost:8002
+        VITE_COMEX_URL: http://localhost:8003
+        VITE_SENASA_URL: http://localhost:8004
+        VITE_AUDITOR_URL: http://localhost:8005
