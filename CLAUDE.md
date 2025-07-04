@@ -74,3 +74,61 @@ If agents return INSUFFICIENT_CONTEXT:
 - Add IGJ agent for corporate law
 - Implement caching for frequently asked questions
 - Add webhook for Slack/Discord integration
+
+## DigitalOcean/Docker Deployment Quirks
+
+### Common Issues and Solutions
+
+1. **docker-compose recreate container error: 'ContainerConfig'**
+   - This happens when docker-compose tries to recreate a container
+   - Solution: Force remove and recreate
+   ```bash
+   docker rm -f container_name
+   docker-compose up -d service_name
+   ```
+
+2. **Frontend not accessible from other computers (Network Error)**
+   - React/Vite environment variables are baked at BUILD time, not runtime
+   - The `VITE_API_BASE_URL` must be set to the server IP, not localhost
+   - Solution: Rebuild frontend with correct API URL
+   ```bash
+   docker build -t proyecto-sting_frontend \
+     --build-arg VITE_API_BASE_URL=http://YOUR_SERVER_IP:8001 \
+     --no-cache ./frontend
+   ```
+
+3. **Default directory on SSH**
+   - Add to ~/.bashrc to auto-navigate to project:
+   ```bash
+   echo "cd /opt/proyecto-sting" >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+4. **Firewall blocks ports**
+   - DigitalOcean Docker image only allows SSH (22) and Docker (2375/2376) by default
+   - Open required ports:
+   ```bash
+   ufw allow 80
+   ufw allow 8001
+   ufw allow 8002
+   ufw allow 8003
+   ufw allow 8004
+   ufw allow 8005
+   ```
+
+5. **Frontend Dockerfile needs ARG support**
+   - Add these lines to accept build-time API URL:
+   ```dockerfile
+   ARG VITE_API_BASE_URL=http://localhost:8001
+   ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+   ```
+
+6. **docker-compose vs docker compose**
+   - DigitalOcean uses older `docker-compose` (hyphenated)
+   - Both work, but stick with `docker-compose` for consistency
+
+7. **Check if services are using correct URLs**
+   ```bash
+   # Verify frontend has server IP in built files
+   docker exec frontend grep -r "YOUR_SERVER_IP" /usr/share/nginx/html/assets/
+   ```
