@@ -15,9 +15,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001
 
 // For production (Render), we'll use full URLs. For local dev, construct from ports.
 const agentUrls = {
-  bcra: import.meta.env.VITE_BCRA_URL || `http://localhost:${import.meta.env.VITE_BCRA_PORT || 8002}`,
-  comex: import.meta.env.VITE_COMEX_URL || `http://localhost:${import.meta.env.VITE_COMEX_PORT || 8003}`,
-  senasa: import.meta.env.VITE_SENASA_URL || `http://localhost:${import.meta.env.VITE_SENASA_PORT || 8004}`
+  bcra: import.meta.env.VITE_BCRA_URL || `http://147.182.248.187:8002`,
+  comex: import.meta.env.VITE_COMEX_URL || `http://147.182.248.187:8003`,
+  senasa: import.meta.env.VITE_SENASA_URL || `http://147.182.248.187:8004`
 };
 
 interface FlowUpdate {
@@ -162,7 +162,7 @@ export function useOrchestrator() {
       });
 
       let auditResponse;
-      const auditorUrl = import.meta.env.VITE_AUDITOR_URL || 'http://localhost:8005';
+      const auditorUrl = import.meta.env.VITE_AUDITOR_URL || 'http://147.182.248.187:8005';
       
       if (agents.length > 1) {
         // Multi-agent audit

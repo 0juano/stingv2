@@ -30,7 +30,8 @@ const styles = {
     border: '2px solid #444',
     backgroundColor: '#2a2a2a',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.5)',
-    width: '600px',
+    width: '100%',
+    maxWidth: '600px',
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -83,6 +84,18 @@ const styles = {
     fontFamily: 'inherit',
     fontSize: '0.875rem',
   },
+  submitButton: {
+    border: '2px solid #ff6b35',
+    backgroundColor: '#2a2a2a',
+    color: '#ff6b35',
+    padding: '0.75rem 1.5rem',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '1rem',
+    fontWeight: '600',
+    minWidth: '80px',
+    minHeight: '44px',
+  },
 };
 
 export default function TerminalSimple() {
@@ -104,6 +117,7 @@ export default function TerminalSimple() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<any>({ currentStep: 'idle' });
   const [showFlow, setShowFlow] = useState(true);  // Start with flow visible
+  const [isMobile, setIsMobile] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
@@ -127,6 +141,15 @@ export default function TerminalSimple() {
       }
     }
   }, [messages]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Handle global keyboard shortcuts
@@ -237,15 +260,91 @@ export default function TerminalSimple() {
             background: #555;
             border: 2px solid #333;
           }
+          
+          /* Mobile styles */
+          @media (max-width: 768px) {
+            .container {
+              padding: 0.25rem !important;
+            }
+            
+            .terminal {
+              max-height: 100vh !important;
+              border: none !important;
+              box-shadow: none !important;
+              background-color: transparent !important;
+            }
+            
+            .terminal-header {
+              padding: 0.75rem 0.5rem !important;
+              font-size: 1rem !important;
+              background-color: #1a1a1a !important;
+              border-bottom: 1px solid #333 !important;
+            }
+            
+            .terminal-header span {
+              font-size: 0.9rem !important;
+            }
+            
+            .terminal-body {
+              padding: 1rem 0.75rem !important;
+              font-size: 1rem !important;
+              line-height: 1.6 !important;
+            }
+            
+            .quick-actions {
+              grid-template-columns: 1fr !important;
+              gap: 0.5rem !important;
+              padding: 0 0.75rem !important;
+              margin-top: 0.5rem !important;
+              margin-bottom: 0.5rem !important;
+            }
+            
+            .quick-action-button {
+              padding: 1rem !important;
+              font-size: 0.95rem !important;
+              min-height: 52px !important;
+              width: 100% !important;
+              border-radius: 4px !important;
+            }
+            
+            .input-form {
+              flex-direction: row !important;
+              align-items: stretch !important;
+              gap: 0.75rem !important;
+              padding: 0 0.75rem !important;
+            }
+            
+            .input-form > span:first-child {
+              display: none !important;
+            }
+            
+            .input-textarea {
+              font-size: 1.1rem !important;
+              padding: 0.75rem !important;
+              border: 1px solid #444 !important;
+              border-radius: 4px !important;
+              background-color: #2a2a2a !important;
+            }
+            
+            .flow-diagram {
+              display: none !important;
+            }
+            
+            button[type="submit"] {
+              min-width: 100px !important;
+              font-size: 1rem !important;
+              border-radius: 4px !important;
+            }
+          }
         `}
       </style>
       
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '100%' }} className="container">
         {/* Main Terminal */}
-        <div style={{ ...styles.terminal, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ ...styles.terminal, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }} className="terminal">
           {/* Header */}
-          <div style={styles.header}>
-            <span style={{ color: '#ff6b35' }}>🏛️ ORÁCULO DE LA BUROCRACIA</span>
+          <div style={styles.header} className="terminal-header">
+            <span style={{ color: '#ff6b35' }}>{isMobile ? 'ORÁCULO' : '🏛️ ORÁCULO DE LA BUROCRACIA'}</span>
             {messages.some(m => m.type === 'response') && (
               <button
                 onClick={() => {
@@ -291,7 +390,7 @@ export default function TerminalSimple() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column'
-            }}>
+            }} className="flow-diagram">
               <FlowDiagramSimple flow={currentFlow} />
             </div>
           )}
@@ -352,7 +451,7 @@ export default function TerminalSimple() {
             
             {/* Input Line - Only show if no responses */}
             {!messages.some(m => m.type === 'response') && (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }} className="input-form">
                 <span style={{ color: '#ff6b35', marginTop: '0.25rem' }}>&gt;</span>
                 <textarea
                 ref={textareaRef}
@@ -374,11 +473,23 @@ export default function TerminalSimple() {
                 }}
                 disabled={isProcessing}
                 style={styles.input}
+                className="input-textarea"
                 placeholder={isProcessing ? getProcessingPlaceholder() : getInputPlaceholder()}
                 rows={1}
                 autoFocus
               />
               {!isProcessing && <span style={styles.cursor}></span>}
+              <button
+                type="submit"
+                disabled={isProcessing || !input.trim()}
+                style={{
+                  ...styles.submitButton,
+                  opacity: (isProcessing || !input.trim()) ? 0.5 : 1,
+                  cursor: (isProcessing || !input.trim()) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                Enviar
+              </button>
             </form>
             )}
           </div>
@@ -388,13 +499,14 @@ export default function TerminalSimple() {
         {!messages.some(m => m.type === 'response') && (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(3, 1fr)', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', 
             gap: '0.5rem', 
             marginTop: '1rem', 
             marginBottom: '1rem', 
-            width: '600px', 
+            width: '100%',
+            maxWidth: '600px', 
             flex: 'none' 
-          }}>
+          }} className="quick-actions">
             {/* BCRA Only */}
             <button
               onClick={() => {
@@ -403,6 +515,7 @@ export default function TerminalSimple() {
                 setTimeout(adjustTextareaHeight, 0);
               }}
               style={styles.button}
+              className="quick-action-button"
             >
               Límite Pagos (BCRA)
             </button>
@@ -415,57 +528,82 @@ export default function TerminalSimple() {
                 setTimeout(adjustTextareaHeight, 0);
               }}
               style={styles.button}
+              className="quick-action-button"
             >
               Exportar Vino (COMEX)
             </button>
             
-            {/* SENASA Only */}
-            <button
-              onClick={() => {
-                setInput("¿Requisitos para exportar carne vacuna a China?");
-                textareaRef.current?.focus();
-                setTimeout(adjustTextareaHeight, 0);
-              }}
-              style={styles.button}
-            >
-              Exportar Carne (SENASA)
-            </button>
+            {/* Show different buttons on mobile vs desktop */}
+            {!isMobile && (
+              <>
+                {/* SENASA Only */}
+                <button
+                  onClick={() => {
+                    setInput("¿Requisitos para exportar carne vacuna a China?");
+                    textareaRef.current?.focus();
+                    setTimeout(adjustTextareaHeight, 0);
+                  }}
+                  style={styles.button}
+                  className="quick-action-button"
+                >
+                  Exportar Carne (SENASA)
+                </button>
+                
+                {/* BCRA + COMEX */}
+                <button
+                  onClick={() => {
+                    setInput("¿Cómo importar maquinaria industrial y pagar al proveedor?");
+                    textareaRef.current?.focus();
+                    setTimeout(adjustTextareaHeight, 0);
+                  }}
+                  style={styles.button}
+                  className="quick-action-button"
+                >
+                  Importar y Pagar (BCRA+COMEX)
+                </button>
+                
+                {/* COMEX + SENASA */}
+                <button
+                  onClick={() => {
+                    setInput("¿Cómo exportar miel orgánica a la Unión Europea?");
+                    textareaRef.current?.focus();
+                    setTimeout(adjustTextareaHeight, 0);
+                  }}
+                  style={styles.button}
+                  className="quick-action-button"
+                >
+                  Exportar Miel (COMEX+SENASA)
+                </button>
+                
+                {/* All Three */}
+                <button
+                  onClick={() => {
+                    setInput("¿Proceso completo para importar productos farmacéuticos?");
+                    textareaRef.current?.focus();
+                    setTimeout(adjustTextareaHeight, 0);
+                  }}
+                  style={styles.button}
+                  className="quick-action-button"
+                >
+                  Importar Farma (TODOS)
+                </button>
+              </>
+            )}
             
-            {/* BCRA + COMEX */}
-            <button
-              onClick={() => {
-                setInput("¿Cómo importar maquinaria industrial y pagar al proveedor?");
-                textareaRef.current?.focus();
-                setTimeout(adjustTextareaHeight, 0);
-              }}
-              style={styles.button}
-            >
-              Importar y Pagar (BCRA+COMEX)
-            </button>
-            
-            {/* COMEX + SENASA */}
-            <button
-              onClick={() => {
-                setInput("¿Cómo exportar miel orgánica a la Unión Europea?");
-                textareaRef.current?.focus();
-                setTimeout(adjustTextareaHeight, 0);
-              }}
-              style={styles.button}
-            >
-              Exportar Miel (COMEX+SENASA)
-            </button>
-            
-            {/* All Three */}
-            <button
-              onClick={() => {
-                setInput("¿Proceso completo para importar productos farmacéuticos?");
-                textareaRef.current?.focus();
-                setTimeout(adjustTextareaHeight, 0);
-              }}
-              style={styles.button}
-            >
-              Importar Farma (TODOS)
-            </button>
+            {/* Mobile only shows most important question */}
+            {isMobile && (
+              <button
+                onClick={() => {
+                  setInput("¿Cómo importar maquinaria industrial y pagar al proveedor?");
+                  textareaRef.current?.focus();
+                  setTimeout(adjustTextareaHeight, 0);
+                }}
+                style={styles.button}
+                className="quick-action-button"
+              >
+                Importar y Pagar
+              </button>
+            )}
           </div>
         )}
 
@@ -474,7 +612,8 @@ export default function TerminalSimple() {
           <div style={{ 
             marginTop: '1rem', 
             marginBottom: '1rem', 
-            width: '600px', 
+            width: '100%',
+            maxWidth: '600px', 
             display: 'flex',
             justifyContent: 'flex-start',
             flex: 'none' 

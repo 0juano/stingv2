@@ -34,7 +34,7 @@ const styles = {
     backgroundColor: '#2a2a2a',
     padding: '0.5rem 0.875rem',
     display: 'inline-block',
-    minWidth: '110px',
+    minWidth: '90px',
     textAlign: 'center' as const,
     fontSize: '0.875rem',
   },
@@ -152,7 +152,7 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
           </div>
 
           {/* Agents */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             {['bcra', 'comex', 'senasa'].map((agent) => (
               <motion.div
                 key={agent}
