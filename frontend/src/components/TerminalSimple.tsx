@@ -245,7 +245,7 @@ export default function TerminalSimple() {
         <div style={{ ...styles.terminal, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Header */}
           <div style={styles.header}>
-            <span style={{ color: '#ff6b35' }}>🏛️ BUREAUCRACY ORACLE</span>
+            <span style={{ color: '#ff6b35' }}>🏛️ ORÁCULO DE LA BUROCRACIA</span>
             {messages.some(m => m.type === 'response') && (
               <button
                 onClick={() => {
