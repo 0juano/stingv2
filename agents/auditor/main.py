@@ -473,27 +473,6 @@ async def format_response(audit_response: AuditResponse):
             
             markdown += f"{'─' * 40}\n"
             markdown += f"Total:                   {confidence_percent:2d} / 100"
-            
-            # Add cost information if web searches were performed
-            busquedas = audit_response.metadata.get('busquedas_web', 0)
-            if busquedas > 0:
-                # Calculate Tavily search cost based on number of searches
-                # Each search costs $0.004 (basic) for quick + $0.015 (advanced) for full
-                # If busquedas == 1, it's just a quick search ($0.004)
-                # If busquedas == 2, it's quick + full ($0.019)
-                # For multi-agent, multiply by number of searches
-                search_cost = 0.0
-                if busquedas == 1:
-                    search_cost = 0.004  # Quick search only
-                elif busquedas == 2:
-                    search_cost = 0.019  # Quick + full search
-                else:
-                    # For multi-agent cases, assume mix of quick and full searches
-                    search_cost = busquedas * 0.0095  # Average of quick and full
-                
-                markdown += f"\n\n💰 **Costo de búsquedas web:**\n"
-                markdown += f"Búsquedas realizadas:    {busquedas}\n"
-                markdown += f"Costo Tavily:            ${search_cost:.4f}"
         except Exception as e:
             logger.error(f"Error formatting confidence breakdown: {str(e)}")
     

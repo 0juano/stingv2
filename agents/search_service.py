@@ -219,7 +219,7 @@ class TavilySearchService:
         
         lines = ["=== CONTEXTO DE BÚSQUEDA (NO INCLUIR EN RESPUESTA) ==="]
         lines.append("📊 INFORMACIÓN ACTUALIZADA DE BÚSQUEDA WEB:")
-        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen pero NO menciones la búsqueda web, costos o Tavily en tu respuesta:\n")
+        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen en tu respuesta:\n")
         
         # Extract and highlight numeric values from all sources
         all_percentages = set()

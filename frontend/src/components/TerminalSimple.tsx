@@ -338,10 +338,10 @@ export default function TerminalSimple() {
                     {(message.cost !== undefined || message.duration !== undefined) && (
                       <div style={{ color: '#999', fontSize: '0.875rem', marginTop: '0.5rem' }}>
                         {message.cost !== undefined && (
-                          <div>💰 Cost: ${message.cost.toFixed(4)}</div>
+                          <div>💰 Costo: ${message.cost.toFixed(4)}</div>
                         )}
                         {message.duration !== undefined && (
-                          <div>⏱️ Time: {message.duration.toFixed(1)}s</div>
+                          <div>⏱️ Tiempo: {message.duration.toFixed(1)}s</div>
                         )}
                       </div>
                     )}
