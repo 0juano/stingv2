@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "rebuild-frontend.sh",
     "frontend/public/oracle-favicon.svg",
     "DEPLOYMENT_READY.md",
     "DIGITALOCEAN_DEPLOY_STEPS.md",
