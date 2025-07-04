@@ -217,8 +217,9 @@ class TavilySearchService:
         
         import re
         
-        lines = ["📊 INFORMACIÓN ACTUALIZADA DE BÚSQUEDA WEB:"]
-        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen:\n")
+        lines = ["=== CONTEXTO DE BÚSQUEDA (NO INCLUIR EN RESPUESTA) ==="]
+        lines.append("📊 INFORMACIÓN ACTUALIZADA DE BÚSQUEDA WEB:")
+        lines.append("⚠️ IMPORTANTE: Usa estos valores EXACTAMENTE como aparecen pero NO menciones la búsqueda web, costos o Tavily en tu respuesta:\n")
         
         # Extract and highlight numeric values from all sources
         all_percentages = set()
@@ -267,7 +268,7 @@ class TavilySearchService:
                 lines.append(f"   Contenido: {content_preview}...")
         
         lines.append(f"\nActualizado: {search_results.get('last_updated', 'N/A')}")
-        lines.append("=== FIN INFORMACIÓN DE BÚSQUEDA ===")
+        lines.append("=== FIN CONTEXTO DE BÚSQUEDA (NO INCLUIR EN RESPUESTA) ===")
         
         return "\n".join(lines)
 

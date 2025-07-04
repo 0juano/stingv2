@@ -105,6 +105,8 @@ Cuando proporciones información numérica (límites, montos, porcentajes):
 
 ## Formato de salida (IMPORTANTE: devuelve SOLO JSON)
 
+IMPORTANTE: NUNCA incluyas información sobre costos de búsqueda, cantidad de búsquedas realizadas, o costos de Tavily en tu respuesta. Solo incluye la información solicitada sobre regulaciones.
+
 {
   "Respuesta": "<explicación clara con citas>",
   "Normativa": [
