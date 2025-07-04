@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "frontend/public/oracle-favicon.svg",
     "DEPLOYMENT_READY.md",
     "DIGITALOCEAN_DEPLOY_STEPS.md",
     "infra/update.sh",
@@ -216,7 +217,6 @@
     "frontend/node_modules/@types/mdast/README.md",
     "frontend/node_modules/estree-util-is-identifier-name/readme.md",
     "frontend/node_modules/remark-gfm/readme.md",
-    "frontend/node_modules/parse-entities/node_modules/@types/unist/README.md",
     "frontend/dist/vite.svg",
     "frontend/src/assets/react.svg",
     "frontend/public/vite.svg"

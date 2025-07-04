@@ -37,6 +37,9 @@ kanban-plugin: board
 - [ ] Implement monitoring (Prometheus/Grafana)
 - [ ] Create automated deployment scripts
 - [ ] Add health checks and auto-recovery
+- [ ] **Add HTTPS with Let's Encrypt** 🔒
+- [ ] **Get cheap domain name** (namecheap ~$1/year for .xyz)
+- [ ] **Add favicon for browser tab** 🎨
 
 
 ## 🚧 In Progress
