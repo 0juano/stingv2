@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import FlowDiagramSimple from './FlowDiagramSimple';
+import QuestionScreen from './QuestionScreen';
 import { useOrchestrator } from '../hooks/useOrchestrator';
 import { getInitialGreeting, getInitialInstruction, getInputPlaceholder, getProcessingPlaceholder } from '../utils/bureaucratMessages';
 
@@ -118,6 +120,8 @@ export default function TerminalSimple() {
   const [currentFlow, setCurrentFlow] = useState<any>({ currentStep: 'idle' });
   const [showFlow, setShowFlow] = useState(true);  // Start with flow visible
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileScreen, setMobileScreen] = useState<'input' | 'processing' | 'result'>('input');
+  const [lastResponse, setLastResponse] = useState<Message | null>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { processQuery } = useOrchestrator();
@@ -188,7 +192,12 @@ export default function TerminalSimple() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isProcessing) return;
+    console.log('[TerminalSimple] Form submitted with input:', input);
+    
+    if (!input.trim() || isProcessing) {
+      console.log('[TerminalSimple] Submission blocked - empty input or already processing');
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -197,18 +206,29 @@ export default function TerminalSimple() {
       timestamp: new Date(),
     };
 
+    console.log('[TerminalSimple] Creating user message:', userMessage);
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsProcessing(true);
     
+    // Mobile: transition to processing screen
+    if (isMobile) {
+      console.log('[TerminalSimple] Mobile detected - transitioning to processing screen');
+      setMobileScreen('processing');
+    }
+    
     try {
+      console.log('[TerminalSimple] Starting query processing...');
       setShowFlow(true);
       const result = await processQuery(input, (flow) => {
+        console.log('[TerminalSimple] Flow update received:', flow);
         setCurrentFlow(flow);
         
         // Processing logs removed for simplified UI
       });
 
+      console.log('[TerminalSimple] Query processing complete. Result:', result);
+      
       const responseMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'response',
@@ -219,10 +239,25 @@ export default function TerminalSimple() {
         duration: result.duration,
       };
 
+      console.log('[TerminalSimple] Creating response message:', responseMessage);
       setMessages(prev => [...prev, responseMessage]);
+      
+      // Mobile: transition to result screen and store response
+      if (isMobile) {
+        console.log('[TerminalSimple] Mobile - transitioning to result screen');
+        setLastResponse(responseMessage);
+        setMobileScreen('result');
+      }
       // Hide flow diagram immediately when response arrives
       setShowFlow(false);
     } catch (error: any) {
+      console.error('[TerminalSimple] Error processing query:', error);
+      console.error('[TerminalSimple] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        response: error.response?.data
+      });
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'system',
@@ -230,11 +265,42 @@ export default function TerminalSimple() {
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
+      
+      // Mobile: show error on result screen
+      if (isMobile) {
+        console.log('[TerminalSimple] Mobile - showing error on result screen');
+        setLastResponse(errorMessage);
+        setMobileScreen('result');
+      }
     } finally {
+      console.log('[TerminalSimple] Cleanup - resetting processing state');
       setIsProcessing(false);
       setCurrentFlow({ currentStep: 'idle' });
       // Keep flow hidden after processing
     }
+  };
+
+  const handleNewQuery = () => {
+    // Reset everything for a new query
+    setMessages([
+      {
+        id: '1',
+        type: 'system',
+        content: getInitialGreeting(),
+        timestamp: new Date(),
+      },
+      {
+        id: '2',
+        type: 'system',
+        content: getInitialInstruction(),
+        timestamp: new Date(),
+      },
+    ]);
+    setInput('');
+    setCurrentFlow({ currentStep: 'idle' });
+    setShowFlow(true);
+    setMobileScreen('input');
+    setLastResponse(null);
   };
 
   return (
@@ -259,6 +325,32 @@ export default function TerminalSimple() {
           .terminal-body::-webkit-scrollbar-thumb {
             background: #555;
             border: 2px solid #333;
+          }
+          
+          /* Retro terminal animations */
+          @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+          }
+          
+          @keyframes terminalPrint {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          .scanline-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #00ff00;
+            animation: scanline 0.5s ease-out;
+            z-index: 9999;
+          }
+          
+          .terminal-print {
+            animation: terminalPrint 0.3s ease-out;
           }
           
           /* Mobile styles */
@@ -355,10 +447,277 @@ export default function TerminalSimple() {
               overflow-x: hidden !important;
               width: 100vw !important;
             }
+            
+            /* Mobile screen-specific styles */
+            .mobile-input-screen {
+              display: flex;
+              flex-direction: column;
+              height: 100vh;
+              padding: 2rem 1.5rem;
+              background-color: #1a1a1a;
+            }
+            
+            .mobile-input-title {
+              font-size: 1.75rem;
+              font-weight: 600;
+              color: #ff6b35;
+              margin-bottom: 1rem;
+              text-align: center;
+              letter-spacing: 0.05em;
+            }
+            
+            .mobile-input-container {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              gap: 1.5rem;
+            }
+            
+            .mobile-input-field {
+              width: 100%;
+              padding: 1rem;
+              font-size: 1.1rem;
+              background-color: #2a2a2a;
+              border: 2px solid #444;
+              border-radius: 8px;
+              color: #e0e0e0;
+              font-family: inherit;
+              min-height: 100px;
+              resize: none;
+            }
+            
+            .mobile-input-field:focus {
+              border-color: #ff6b35;
+              outline: none;
+            }
+            
+            .mobile-submit-btn {
+              padding: 1rem 2rem;
+              font-size: 1.1rem;
+              font-weight: 600;
+              background-color: #2a2a2a;
+              border: 2px solid #ff6b35;
+              border-radius: 8px;
+              color: #ff6b35;
+              cursor: pointer;
+            }
+            
+            .mobile-examples {
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+              margin-top: 2rem;
+              width: 100%;
+            }
+            
+            .mobile-example-btn {
+              padding: 1rem;
+              font-size: 0.95rem;
+              background-color: #1E1E1E;
+              border: 1px solid rgba(156, 163, 175, 0.3);
+              border-radius: 12px;
+              color: #e0e0e0;
+              cursor: pointer;
+              text-align: left;
+              transition: all 0.2s;
+              font-family: inherit;
+            }
+            
+            .mobile-example-btn:hover {
+              background-color: #2a2a2a;
+              border-color: #ff6b35;
+              transform: translateY(-2px);
+            }
+            
+            .mobile-processing-screen {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              background-color: #0a0a0a;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 1000;
+            }
+            
+            .mobile-result-screen {
+              display: flex;
+              flex-direction: column;
+              height: 100vh;
+              background-color: #1a1a1a;
+            }
+            
+            .mobile-result-header {
+              padding: 1rem 1.5rem;
+              background-color: #0a0a0a;
+              border-bottom: 1px solid #333;
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: #ff6b35;
+            }
+            
+            .mobile-result-content {
+              flex: 1;
+              padding: 1.5rem;
+              overflow-y: auto;
+              font-size: 1rem;
+              line-height: 1.6;
+              color: #e0e0e0;
+            }
+            
+            .mobile-result-actions {
+              padding: 1rem;
+              background-color: #0a0a0a;
+              border-top: 1px solid #333;
+              display: flex;
+              gap: 1rem;
+            }
+            
+            .mobile-action-btn {
+              flex: 1;
+              padding: 0.875rem;
+              font-size: 1rem;
+              font-weight: 600;
+              border-radius: 6px;
+              cursor: pointer;
+            }
+            
+            .mobile-action-primary {
+              background-color: #2a2a2a;
+              border: 2px solid #ff6b35;
+              color: #ff6b35;
+            }
+            
+            .mobile-action-secondary {
+              background-color: #2a2a2a;
+              border: 1px solid #666;
+              color: #999;
+            }
           }
         `}
       </style>
       
+      {/* Mobile Experience - 3 Screens */}
+      {isMobile && (
+        <>
+          {/* Screen 1: Input */}
+          <AnimatePresence mode="wait">
+            {mobileScreen === 'input' && (
+              <QuestionScreen
+                key="question-screen"
+                onSubmit={async (question) => {
+                  // Set the input and process the query directly
+                  setInput(question);
+                  setIsProcessing(true);
+                  setMobileScreen('processing');
+                  
+                  try {
+                    console.log('[TerminalSimple] Processing question from QuestionScreen:', question);
+                    setShowFlow(true);
+                    const result = await processQuery(question, (flow) => {
+                      console.log('[TerminalSimple] Flow update received:', flow);
+                      setCurrentFlow(flow);
+                    });
+
+                    console.log('[TerminalSimple] Query processing complete. Result:', result);
+                    
+                    const responseMessage: Message = {
+                      id: (Date.now() + 1).toString(),
+                      type: 'response',
+                      content: result.response,
+                      timestamp: new Date(),
+                      flow: result.flow,
+                      cost: result.totalCost,
+                      duration: result.duration,
+                    };
+
+                    setMessages(prev => [...prev, responseMessage]);
+                    setLastResponse(responseMessage);
+                    setMobileScreen('result');
+                    setShowFlow(false);
+                  } catch (error: any) {
+                    console.error('[TerminalSimple] Error processing query:', error);
+                    
+                    const errorMessage: Message = {
+                      id: (Date.now() + 1).toString(),
+                      type: 'system',
+                      content: `Error: ${error.message}`,
+                      timestamp: new Date(),
+                    };
+                    setMessages(prev => [...prev, errorMessage]);
+                    setLastResponse(errorMessage);
+                    setMobileScreen('result');
+                  } finally {
+                    setIsProcessing(false);
+                    setCurrentFlow({ currentStep: 'idle' });
+                  }
+                }}
+                onExit={() => {}}
+              />
+            )}
+          </AnimatePresence>
+          
+          {/* Screen 2: Processing */}
+          <AnimatePresence>
+            {mobileScreen === 'processing' && (
+              <motion.div 
+                className="mobile-processing-screen"
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  type: "spring",
+                  duration: 0.2,
+                  delay: 0.05
+                }}
+              >
+                <div style={{ transform: 'scale(1.2)' }}>
+                  <FlowDiagramSimple flow={currentFlow} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Screen 3: Result */}
+          {mobileScreen === 'result' && lastResponse && (
+            <div className="mobile-result-screen terminal-print">
+              <div className="mobile-result-header">RESPUESTA</div>
+              <div className="mobile-result-content">
+                <div style={{ whiteSpace: 'pre-wrap' }}>{lastResponse.content}</div>
+                {(lastResponse.cost !== undefined || lastResponse.duration !== undefined) && (
+                  <div style={{ color: '#666', fontSize: '0.875rem', marginTop: '1rem' }}>
+                    {lastResponse.cost !== undefined && (
+                      <div>💰 Costo: ${lastResponse.cost.toFixed(4)}</div>
+                    )}
+                    {lastResponse.duration !== undefined && (
+                      <div>⏱️ Tiempo: {lastResponse.duration.toFixed(1)}s</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="mobile-result-actions">
+                <button onClick={handleNewQuery} className="mobile-action-btn mobile-action-primary">
+                  Nueva Consulta
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(lastResponse.content);
+                    // Could add toast notification here
+                  }}
+                  className="mobile-action-btn mobile-action-secondary"
+                >
+                  Copiar
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+      
+      {/* Desktop Experience - Keep unchanged */}
+      {!isMobile && (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '100%' }} className="container">
         {/* Main Terminal */}
         <div style={{ ...styles.terminal, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }} className="terminal">
@@ -670,6 +1029,7 @@ export default function TerminalSimple() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
