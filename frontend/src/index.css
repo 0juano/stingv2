@@ -28,6 +28,20 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Prevent horizontal scroll on mobile */
+@media (max-width: 768px) {
+  body {
+    min-width: unset;
+    width: 100vw;
+  }
+  
+  #root {
+    width: 100vw;
+    overflow-x: hidden;
+  }
 }
 
 /* IBM Plex Mono for numbers and certain elements */

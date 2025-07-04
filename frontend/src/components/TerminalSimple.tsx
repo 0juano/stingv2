@@ -264,7 +264,9 @@ export default function TerminalSimple() {
           /* Mobile styles */
           @media (max-width: 768px) {
             .container {
-              padding: 0.25rem !important;
+              padding: 0 !important;
+              width: 100vw !important;
+              overflow-x: hidden !important;
             }
             
             .terminal {
@@ -272,6 +274,9 @@ export default function TerminalSimple() {
               border: none !important;
               box-shadow: none !important;
               background-color: transparent !important;
+              width: 100% !important;
+              max-width: 100vw !important;
+              margin: 0 !important;
             }
             
             .terminal-header {
@@ -294,9 +299,11 @@ export default function TerminalSimple() {
             .quick-actions {
               grid-template-columns: 1fr !important;
               gap: 0.5rem !important;
-              padding: 0 0.75rem !important;
-              margin-top: 0.5rem !important;
-              margin-bottom: 0.5rem !important;
+              padding: 0 1rem !important;
+              margin: 0.5rem 0 !important;
+              width: 100% !important;
+              max-width: 100vw !important;
+              box-sizing: border-box !important;
             }
             
             .quick-action-button {
@@ -310,8 +317,10 @@ export default function TerminalSimple() {
             .input-form {
               flex-direction: row !important;
               align-items: stretch !important;
-              gap: 0.75rem !important;
-              padding: 0 0.75rem !important;
+              gap: 0.5rem !important;
+              padding: 0 1rem !important;
+              width: 100% !important;
+              box-sizing: border-box !important;
             }
             
             .input-form > span:first-child {
@@ -331,9 +340,20 @@ export default function TerminalSimple() {
             }
             
             button[type="submit"] {
-              min-width: 100px !important;
-              font-size: 1rem !important;
+              min-width: 80px !important;
+              font-size: 0.95rem !important;
               border-radius: 4px !important;
+              padding: 0.75rem 1rem !important;
+            }
+            
+            /* Ensure no horizontal overflow */
+            body {
+              overflow-x: hidden !important;
+            }
+            
+            #root {
+              overflow-x: hidden !important;
+              width: 100vw !important;
             }
           }
         `}
