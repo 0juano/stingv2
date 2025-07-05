@@ -43,15 +43,12 @@ export default function QuestionScreen({ onSubmit, onExit }: QuestionScreenProps
   };
 
   const handleSelectExample = (text: string) => {
-    // Set input and immediately submit (skip shake animation)
+    // Only populate the input field, don't submit
     setInput(text);
     setError('');
-    setIsLoading(true);
     
-    // Blur input and trigger submit
-    inputRef.current?.blur();
-    if (onExit) onExit();
-    setTimeout(() => onSubmit(text), 150);
+    // Focus the input field so user can see the populated text
+    inputRef.current?.focus();
   };
 
   return (

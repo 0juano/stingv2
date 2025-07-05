@@ -122,6 +122,7 @@ export default function TerminalSimple() {
   const [isMobile, setIsMobile] = useState(false);
   const [mobileScreen, setMobileScreen] = useState<'input' | 'processing' | 'result'>('input');
   const [lastResponse, setLastResponse] = useState<Message | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -209,6 +210,7 @@ export default function TerminalSimple() {
 
     console.log('[TerminalSimple] Creating user message:', userMessage);
     setMessages(prev => [...prev, userMessage]);
+    setCurrentQuestion(input);  // Store the question for display during processing
     setInput('');
     setIsProcessing(true);
     
@@ -298,6 +300,7 @@ export default function TerminalSimple() {
       },
     ]);
     setInput('');
+    setCurrentQuestion('');  // Clear the stored question
     setCurrentFlow({ currentStep: 'idle' });
     setShowFlow(true);
     setMobileScreen('input');
@@ -643,6 +646,7 @@ export default function TerminalSimple() {
                 onSubmit={async (question) => {
                   // Set the input and process the query directly
                   setInput(question);
+                  setCurrentQuestion(question);  // Store the question for display
                   setIsProcessing(true);
                   setMobileScreen('processing');
                   
@@ -705,7 +709,22 @@ export default function TerminalSimple() {
                   delay: 0.05
                 }}
               >
-                <div style={{ width: '100%', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '100%', height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column' }}>
+                  {/* Display the question at the top */}
+                  {currentQuestion && (
+                    <div style={{ 
+                      textAlign: 'center', 
+                      marginBottom: '1.5rem',
+                      padding: '0 1rem',
+                      color: '#e0e0e0',
+                      fontSize: '1.1rem',
+                      fontWeight: '500',
+                      lineHeight: '1.4'
+                    }}>
+                      <div style={{ color: '#ff6b35', fontSize: '0.875rem', marginBottom: '0.5rem' }}>TU PREGUNTA:</div>
+                      <div>{currentQuestion}</div>
+                    </div>
+                  )}
                   <FlowDiagramSimple flow={currentFlow} />
                 </div>
               </motion.div>

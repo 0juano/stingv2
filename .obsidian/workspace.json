@@ -181,6 +181,9 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "docs/DOMAIN_SETUP_GUIDE.md",
+    "deploy.sh",
+    "deploy-to-production.md",
     "frontend/src/hooks/useKeyboardHeight.ts",
     "frontend/src/components/SuggestionBar.tsx",
     "frontend/src/components/QuestionScreen.tsx",
@@ -192,8 +195,6 @@
     "frontend/FRONTEND_CODE_AUDIT.md",
     "deploy-secure.sh",
     "tests/test_two_tier_search.py",
-    "tests/test_search_content.py",
-    "tests/test_notebook_tariff_improved.py",
     "docs/manual-deploy-steps.md",
     "docs/QUICK_DEPLOY_GUIDE.md",
     "docs/DIGITALOCEAN_DEPLOY_STEPS.md",
@@ -218,7 +219,6 @@
     "RENDER_DEPLOYMENT_CHECKLIST.md",
     "agents/auditor/prompt.md",
     "RENDER_DEPLOYMENT_GUIDE.md",
-    "DEPLOYMENT.md",
     "frontend/dist/vite.svg",
     "frontend/src/assets/react.svg",
     "frontend/public/vite.svg"

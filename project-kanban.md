@@ -62,6 +62,10 @@ kanban-plugin: board
 
 ## 🚧 In Progress
 
+### Mobile UI Improvements
+- [ ] **Show question on agent processing screen** - Display the user's question at the top when agents are processing
+- [ ] **Fix mobile example behavior** - Examples should populate input field, not auto-search (require hitting "Go")
+
 
 
 ## 🧪 Testing/Review
