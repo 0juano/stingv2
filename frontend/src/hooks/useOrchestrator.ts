@@ -15,23 +15,26 @@ import {
 const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 const baseHost = isProduction ? `http://${window.location.hostname}` : 'http://localhost';
 
-// If VITE_API_BASE_URL contains localhost but we're in production, use dynamic baseHost
+// If VITE_API_BASE_URL is empty, contains localhost but we're in production, use dynamic baseHost
 const envApiUrl = import.meta.env.VITE_API_BASE_URL;
-const API_BASE_URL = (envApiUrl && envApiUrl.includes('localhost') && isProduction) 
+const API_BASE_URL = (!envApiUrl || envApiUrl.trim() === '' || (envApiUrl.includes('localhost') && isProduction)) 
   ? `${baseHost}:8001` 
-  : (envApiUrl || `${baseHost}:8001`);
+  : envApiUrl;
 
 // For production (Render), we'll use full URLs. For local dev, construct from ports.
 const agentUrls = {
-  bcra: (import.meta.env.VITE_BCRA_URL && import.meta.env.VITE_BCRA_URL.includes('localhost') && isProduction) 
+  bcra: (!import.meta.env.VITE_BCRA_URL || import.meta.env.VITE_BCRA_URL.trim() === '' || 
+    (import.meta.env.VITE_BCRA_URL.includes('localhost') && isProduction)) 
     ? `${baseHost}:8002` 
-    : (import.meta.env.VITE_BCRA_URL || `${baseHost}:8002`),
-  comex: (import.meta.env.VITE_COMEX_URL && import.meta.env.VITE_COMEX_URL.includes('localhost') && isProduction) 
+    : import.meta.env.VITE_BCRA_URL,
+  comex: (!import.meta.env.VITE_COMEX_URL || import.meta.env.VITE_COMEX_URL.trim() === '' || 
+    (import.meta.env.VITE_COMEX_URL.includes('localhost') && isProduction)) 
     ? `${baseHost}:8003` 
-    : (import.meta.env.VITE_COMEX_URL || `${baseHost}:8003`),
-  senasa: (import.meta.env.VITE_SENASA_URL && import.meta.env.VITE_SENASA_URL.includes('localhost') && isProduction) 
+    : import.meta.env.VITE_COMEX_URL,
+  senasa: (!import.meta.env.VITE_SENASA_URL || import.meta.env.VITE_SENASA_URL.trim() === '' || 
+    (import.meta.env.VITE_SENASA_URL.includes('localhost') && isProduction)) 
     ? `${baseHost}:8004` 
-    : (import.meta.env.VITE_SENASA_URL || `${baseHost}:8004`)
+    : import.meta.env.VITE_SENASA_URL
 };
 
 interface FlowUpdate {
@@ -238,9 +241,10 @@ export function useOrchestrator() {
       });
 
       let auditResponse;
-      const auditorUrl = (import.meta.env.VITE_AUDITOR_URL && import.meta.env.VITE_AUDITOR_URL.includes('localhost') && isProduction) 
+      const auditorUrl = (!import.meta.env.VITE_AUDITOR_URL || import.meta.env.VITE_AUDITOR_URL.trim() === '' || 
+        (import.meta.env.VITE_AUDITOR_URL.includes('localhost') && isProduction)) 
         ? `${baseHost}:8005` 
-        : (import.meta.env.VITE_AUDITOR_URL || `${baseHost}:8005`);
+        : import.meta.env.VITE_AUDITOR_URL;
       
       if (agents.length > 1) {
         // Multi-agent audit

@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "deploy-production.sh",
     "fix-frontend-crash.sh",
     "fix-frontend-env.sh",
     "fix-frontend-remote.sh",
@@ -195,7 +196,6 @@
     "test-router-detailed.py",
     "test-agents-debug.py",
     "test-router-debug.py",
-    "test-remote-api.sh",
     "docs/manual-deploy-steps.md",
     "docs/QUICK_DEPLOY_GUIDE.md",
     "docs/DIGITALOCEAN_DEPLOY_STEPS.md",

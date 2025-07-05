@@ -3,12 +3,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Accept build arguments
-ARG VITE_API_BASE_URL=http://localhost:8001
-ARG VITE_BCRA_URL=http://localhost:8002
-ARG VITE_COMEX_URL=http://localhost:8003
-ARG VITE_SENASA_URL=http://localhost:8004
-ARG VITE_AUDITOR_URL=http://localhost:8005
+# Accept build arguments (default to empty for dynamic detection)
+ARG VITE_API_BASE_URL=
+ARG VITE_BCRA_URL=
+ARG VITE_COMEX_URL=
+ARG VITE_SENASA_URL=
+ARG VITE_AUDITOR_URL=
 
 # Set environment variables for build
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
