@@ -5,9 +5,4 @@
 services:
   frontend:
     build:
-      args:
-        VITE_API_BASE_URL: http://147.182.248.187:8001
-        VITE_BCRA_URL: http://147.182.248.187:8002
-        VITE_COMEX_URL: http://147.182.248.187:8003
-        VITE_SENASA_URL: http://147.182.248.187:8004
-        VITE_AUDITOR_URL: http://147.182.248.187:8005
+      context: ./frontend
