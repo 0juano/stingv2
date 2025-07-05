@@ -10,7 +10,7 @@ git commit -m "Fix frontend dynamic URL detection for mobile/other computers" ||
 git push origin main
 
 # Deploy to remote server
-ssh root@147.182.248.187 << 'EOF'
+ssh root@$REMOTE_HOST << 'EOF'
 cd /opt/proyecto-sting
 
 echo "📥 Pulling latest code..."

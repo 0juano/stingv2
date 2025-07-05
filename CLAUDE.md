@@ -1,5 +1,29 @@
 # Bureaucracy Oracle - Project Documentation
 
+## 🚨🚨🚨 CRITICAL: NEVER EXPOSE API KEYS 🚨🚨🚨
+
+**NEVER, EVER put API keys in:**
+- Any file that gets committed to Git
+- Shell scripts (.sh files)
+- Docker-compose files
+- Documentation files
+- ANY file except .env (which is gitignored)
+
+**API keys should ONLY exist in:**
+- `.env` file (which is in .gitignore)
+- Environment variables on the server
+
+**Before committing ANY file, check for:**
+- Strings starting with `sk-or-`
+- Strings starting with `tvly-`
+- Any long random strings that look like keys
+
+**If you accidentally expose a key:**
+1. Remove it immediately
+2. Commit the removal
+3. The key is now compromised and must be replaced
+4. User must create a new key at https://openrouter.ai/keys
+
 ## Overview
 This is a 5-agent n8n workflow that acts as a bureaucracy oracle for Argentine regulations. It intelligently routes queries to specialized agents and provides formatted, actionable responses.
 

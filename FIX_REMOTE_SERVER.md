@@ -38,7 +38,7 @@ nano .env
 Add these lines:
 ```
 # OpenRouter API Configuration
-OPENROUTER_API_KEY=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
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
 
 # Tavily Search API Configuration  
 TAVILY_API_KEY=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

@@ -17,7 +17,7 @@ nano .env
 
 Replace the OPENROUTER_API_KEY line with:
 ```
-OPENROUTER_API_KEY=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
+OPENROUTER_API_KEY=YOUR_NEW_OPENROUTER_API_KEY_HERE
 ```
 
 Save and exit (Ctrl+X, then Y, then Enter)
