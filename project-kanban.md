@@ -62,9 +62,8 @@ kanban-plugin: board
 
 ## 🚧 In Progress
 
-### Mobile UI Improvements
-- [ ] **Show question on agent processing screen** - Display the user's question at the top when agents are processing
-- [ ] **Fix mobile example behavior** - Examples should populate input field, not auto-search (require hitting "Go")
+### Mobile Bugs
+- [ ] **Fix mobile copy button** - "Copiar" button on mobile answer screen is not working
 
 
 
@@ -127,6 +126,8 @@ kanban-plugin: board
 - [x] **Add response confidence indicators** (shown as percentages)
 - [x] Show search usage in all responses
 - [x] Display search costs when applicable
+- [x] **Show question on agent processing screen** - Display user's question at top when agents are processing
+- [x] **Fix mobile example behavior** - Examples now populate input field instead of auto-search
 
 
 ## Testing & Documentation

@@ -181,6 +181,7 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "quick-deploy.sh",
     "docs/DOMAIN_SETUP_GUIDE.md",
     "deploy.sh",
     "deploy-to-production.md",
@@ -218,7 +219,6 @@
     "RAILWAY_DEPLOYMENT.md",
     "RENDER_DEPLOYMENT_CHECKLIST.md",
     "agents/auditor/prompt.md",
-    "RENDER_DEPLOYMENT_GUIDE.md",
     "frontend/dist/vite.svg",
     "frontend/src/assets/react.svg",
     "frontend/public/vite.svg"
