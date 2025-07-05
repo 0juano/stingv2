@@ -17,13 +17,17 @@ const baseHost = isProduction ? `http://${window.location.hostname}` : 'http://l
 
 // Use environment variable if set, otherwise use dynamic detection
 const envApiUrl = import.meta.env.VITE_API_BASE_URL;
-const API_BASE_URL = envApiUrl || `${baseHost}:8001`;
+const API_BASE_URL = envApiUrl && envApiUrl.trim() !== '' ? envApiUrl : `${baseHost}:8001`;
 
 // Use environment variables if set, otherwise use dynamic detection
+const envBcra = import.meta.env.VITE_BCRA_URL;
+const envComex = import.meta.env.VITE_COMEX_URL;
+const envSenasa = import.meta.env.VITE_SENASA_URL;
+
 const agentUrls = {
-  bcra: import.meta.env.VITE_BCRA_URL || `${baseHost}:8002`,
-  comex: import.meta.env.VITE_COMEX_URL || `${baseHost}:8003`,
-  senasa: import.meta.env.VITE_SENASA_URL || `${baseHost}:8004`
+  bcra: envBcra && envBcra.trim() !== '' ? envBcra : `${baseHost}:8002`,
+  comex: envComex && envComex.trim() !== '' ? envComex : `${baseHost}:8003`,
+  senasa: envSenasa && envSenasa.trim() !== '' ? envSenasa : `${baseHost}:8004`
 };
 
 interface FlowUpdate {
