@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import SuggestionBar from './SuggestionBar';
+import { ExampleGrid } from './ExampleGrid';
 import { useKeyboardHeight } from '../hooks/useKeyboardHeight';
 
 interface QuestionScreenProps {
@@ -42,123 +43,112 @@ export default function QuestionScreen({ onSubmit, onExit }: QuestionScreenProps
   };
 
   const handleSelectExample = (text: string) => {
+    // Set input and immediately submit (skip shake animation)
     setInput(text);
     setError('');
-    // Focus input to show updated text
-    inputRef.current?.focus();
+    setIsLoading(true);
+    
+    // Blur input and trigger submit
+    inputRef.current?.blur();
+    if (onExit) onExit();
+    setTimeout(() => onSubmit(text), 150);
   };
 
-  // Respect reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   return (
-    <motion.div
-      className="min-h-dvh flex flex-col bg-[#1a1a1a] text-[#e0e0e0] fixed inset-0 w-full h-full md:relative md:inset-auto"
-      initial={{ opacity: 1, scale: 1 }}
-      exit={prefersReducedMotion 
-        ? { opacity: 0 } 
-        : { opacity: 0, scale: 0.96 }
-      }
-      transition={{ duration: 0.15, ease: 'easeInOut' }}
+    <motion.div 
+      className="min-h-dvh flex flex-col justify-between px-6 bg-[#0a0a0a] text-white md:max-w-xs md:mx-auto md:px-0 md:bg-transparent"
+      initial={{ opacity: 0, y: 32 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -32 }}
+      transition={{ 
+        type: "spring",
+        duration: 0.4,
+        delay: 0.05
+      }}
     >
-      {/* Pinned header block */}
-      <header className="h-28 sticky top-0 bg-[#1a1a1a] flex flex-col items-center justify-center px-6 z-10 md:relative md:bg-transparent">
-        <h1 className="text-2xl font-bold text-[#ff6b35] text-center mb-2 tracking-wider">
-          ORÁCULO DE LA BUROCRACIA
+      {/* Header */}
+      <header className="pt-8 pb-6 text-center space-y-2">
+        <h1 className="text-2xl md:text-3xl font-extrabold">
+          <span className="text-orange-500">ORACULO DE BUROCRACIA</span>
         </h1>
-        <p className="text-gray-400 text-center text-sm">
-          ¿Qué trámite necesitás resolver hoy?
-        </p>
+        <p className="text-xs text-gray-400">Tu guía en regulaciones argentinas</p>
       </header>
 
-      {/* Main content area with input */}
-      <div className="flex-1 flex flex-col items-center px-6">
-        <form onSubmit={handleSubmit} className="w-full max-w-xs mt-4">
-          <div className={`relative ${isShaking ? 'animate-shake' : ''}`}>
+      {/* Form section */}
+      <div>
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-300">
+              ¿Cuál es tu consulta?
+            </label>
             <input
               ref={inputRef}
               type="text"
               value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                setError('');
-              }}
+              onChange={(e) => setInput(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder='Ej: "Límite pago exterior" | "Exportar vino"'
-              aria-label="User question"
-              aria-describedby="examplesHint"
-              aria-invalid={!!error}
-              className={`
-                border bg-[#1E1E1E] rounded-md px-4 py-2 w-full text-white text-base
-                outline-none transition-colors duration-200
-                ${isFocused ? 'border-[#ff6b35]' : 'border-gray-400/60 hover:border-gray-400/80'}
-              `}
+              placeholder="Ej: ¿Cómo exportar vino?"
+              disabled={isLoading}
+              className={`w-full px-4 py-3 text-base bg-[#1a1a1a] border rounded-lg placeholder-gray-500 transition-all duration-200 text-ellipsis focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:opacity-50 ${isShaking ? 'animate-shake' : ''} ${isFocused ? 'border-orange-500' : 'border-gray-700'}`}
+              style={{
+                borderColor: error ? '#ef4444' : undefined
+              }}
             />
-            
-            {/* Error message */}
             {error && (
-              <p
-                className="text-red-500 text-xs mt-1 absolute"
-                role="alert"
+              <motion.p 
+                className="text-xs text-red-400"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
               >
                 {error}
-              </p>
+              </motion.p>
             )}
           </div>
 
-          {/* Submit button */}
           <button
             type="submit"
-            disabled={!input.trim() || isLoading}
-            className={`
-              mt-4 w-full py-3 px-6 rounded-lg font-semibold text-base
-              border-2 border-[#ff6b35] text-[#ff6b35]
-              transition-all duration-200
-              ${input.trim() && !isLoading 
-                ? 'opacity-100 cursor-pointer hover:bg-[#ff6b35] hover:text-black' 
-                : 'opacity-40 cursor-not-allowed'
-              }
-            `}
+            disabled={isLoading}
+            className="w-full py-3 px-6 text-base font-semibold rounded-lg transition-all duration-200 transform bg-orange-600 hover:bg-orange-700 hover:scale-[1.02] active:scale-[0.98] disabled:bg-gray-700 disabled:scale-100 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
           >
             {isLoading ? (
-              <span className="inline-flex items-center gap-2">
-                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
                 Procesando...
               </span>
             ) : (
-              'ENVIAR'
+              'Consultar'
             )}
           </button>
         </form>
-
-        {/* Hidden hint for screen readers */}
-        <p id="examplesHint" className="sr-only">
-          Example queries available below when input is focused
-        </p>
       </div>
 
-      {/* Suggestion bar - always mounted */}
-      <SuggestionBar
-        isVisible={isFocused}
-        keyboardHeight={keyboardHeight}
-        onSelectExample={handleSelectExample}
-      />
+      {/* Adaptive spacer - grows only when space available */}
+      <div className="flex-1 max-h-8" />
+
+      {/* Grid examples section */}
+      <div className="pb-6" style={{ paddingBottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24 }}>
+        {/* Mobile grid - visible on small screens */}
+        <motion.div 
+          className="block md:hidden"
+          layout
+          transition={{ duration: 0.2 }}
+        >
+          <ExampleGrid onSelect={handleSelectExample} />
+        </motion.div>
+        
+        {/* Desktop chips - visible on medium screens and up */}
+        <div className="hidden md:block space-y-2">
+          <p className="text-sm text-gray-400">O selecciona una consulta frecuente:</p>
+          <SuggestionBar 
+            onSelectExample={handleSelectExample} 
+            keyboardHeight={keyboardHeight}
+          />
+        </div>
+      </div>
     </motion.div>
   );
 }

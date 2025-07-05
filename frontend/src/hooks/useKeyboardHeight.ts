@@ -1,38 +1,39 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
-/**
- * Hook to detect virtual keyboard height using the VisualViewport API
- * Returns the keyboard height in pixels (0 when keyboard is closed)
- */
 export function useKeyboardHeight() {
-  const [kbHeight, setKbHeight] = useState(0);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
-    const vp = window.visualViewport;
-    if (!vp) {
-      // Fallback: no visualViewport support
-      console.warn('VisualViewport API not supported');
-      return;
-    }
-
-    const handler = () => {
-      // Calculate keyboard height based on viewport offset
-      const height = Math.max(0, vp.offsetTop || 0);
-      setKbHeight(height);
+    const updateHeight = () => {
+      // Check if we're on a mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile && window.visualViewport) {
+        const viewport = window.visualViewport;
+        const windowHeight = window.innerHeight;
+        const viewportHeight = viewport.height;
+        const keyboardHeight = windowHeight - viewportHeight;
+        
+        setKeyboardHeight(keyboardHeight);
+      }
     };
 
-    // Listen for viewport changes (keyboard open/close)
-    vp.addEventListener('resize', handler);
-    vp.addEventListener('scroll', handler);
-    
-    // Initial calculation
-    handler();
+    // Listen for viewport changes
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateHeight);
+      window.visualViewport.addEventListener('scroll', updateHeight);
+      
+      // Initial check
+      updateHeight();
+    }
 
     return () => {
-      vp.removeEventListener('resize', handler);
-      vp.removeEventListener('scroll', handler);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateHeight);
+        window.visualViewport.removeEventListener('scroll', updateHeight);
+      }
     };
   }, []);
 
-  return kbHeight;
+  return keyboardHeight;
 }

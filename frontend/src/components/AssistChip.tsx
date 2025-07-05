@@ -1,46 +1,42 @@
-import { motion } from 'framer-motion';
 
 interface AssistChipProps {
-  icon: string;
   label: string;
-  onClick: () => void;
-  index?: number;
-  'aria-label'?: string;
+  query: string;
+  agents: string[];
+  onClick: (query: string) => void;
 }
 
-export default function AssistChip({ 
-  icon, 
-  label, 
-  onClick, 
-  index = 0,
-  'aria-label': ariaLabel 
-}: AssistChipProps) {
-  // Respect reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export default function AssistChip({ label, query, agents, onClick }: AssistChipProps) {
+  // Icon mapping for agents
+  const iconMap: Record<string, string> = {
+    BCRA: "💰",
+    COMEX: "📦", 
+    SENASA: "🌱",
+    TODOS: "🤝"
+  };
+
+  // Get the first icon from agents array
+  const icon = agents.includes("TODOS") ? iconMap.TODOS : iconMap[agents[0]];
 
   return (
-    <motion.button
-      onClick={onClick}
+    <button
+      onClick={() => onClick(query)}
       role="button"
-      aria-label={ariaLabel || `Use example: ${label}`}
+      aria-label={`Usar ejemplo: ${label}`}
       className="
-        inline-flex items-center gap-2 py-3 px-4 min-w-[44px] min-h-[44px]
-        bg-gray-800 border border-gray-600 rounded-full text-gray-300 text-sm
-        whitespace-nowrap cursor-pointer transition-all duration-200
-        hover:bg-gray-700 hover:border-gray-500 hover:text-white
+        inline-flex items-center gap-2 px-3 py-2
+        bg-[#1a1a1a] hover:bg-[#222] active:bg-[#2a2a2a]
+        border border-gray-700 hover:border-orange-500/50
+        rounded-full whitespace-nowrap
+        text-xs text-gray-300 hover:text-white
+        transition-all duration-200
+        transform hover:scale-[1.02] active:scale-[0.98]
+        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500
+        min-h-[36px]
       "
-      initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
-      transition={{
-        duration: prefersReducedMotion ? 0.01 : 0.15,
-        delay: prefersReducedMotion ? 0 : index * 0.05,
-        ease: 'easeOut'
-      }}
-      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
     >
-      <span className="text-base" aria-hidden="true">{icon}</span>
+      {icon && <span className="text-base">{icon}</span>}
       <span>{label}</span>
-    </motion.button>
+    </button>
   );
 }

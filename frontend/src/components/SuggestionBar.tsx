@@ -2,58 +2,57 @@ import { motion } from 'framer-motion';
 import AssistChip from './AssistChip';
 
 interface SuggestionBarProps {
-  isVisible: boolean;
-  keyboardHeight: number;
   onSelectExample: (text: string) => void;
+  keyboardHeight?: number;
 }
 
+// Fixed 4 example chips as specified
 const examples = [
-  { icon: '📑', label: 'Límite pago exterior', text: '¿Cuál es el límite para pagos al exterior?' },
-  { icon: '🍷', label: 'Exportar vino', text: '¿Cómo exportar vino a Brasil?' },
-  { icon: '🏭', label: 'Importar maquinaria', text: '¿Cómo importar maquinaria industrial?' },
-  { icon: '🥩', label: 'Exportar carne', text: '¿Requisitos para exportar carne vacuna?' },
+  {
+    label: "Límite Pagos (BCRA)",
+    query: "¿Cuál es el límite para pagos al exterior?",
+    agents: ["BCRA"]
+  },
+  {
+    label: "Exportar Vino (COMEX)",
+    query: "¿Cómo exportar vino a Brasil?",
+    agents: ["COMEX"]
+  },
+  {
+    label: "Exportar Miel (COMEX+SENASA)",
+    query: "¿Qué requisitos para exportar miel?",
+    agents: ["COMEX", "SENASA"]
+  },
+  {
+    label: "Importar Farma (TODOS)",
+    query: "¿Cómo importar productos farmacéuticos?",
+    agents: ["TODOS"]
+  }
 ];
 
-/**
- * Suggestion bar that docks above the keyboard when input is focused
- * Always mounted but animated in/out of view
- */
-export default function SuggestionBar({ isVisible, keyboardHeight, onSelectExample }: SuggestionBarProps) {
-  // Respect reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+export default function SuggestionBar({ onSelectExample }: SuggestionBarProps) {
   return (
-    <motion.div
-      className="fixed left-0 right-0 bg-[#1a1a1a] border-t border-gray-700 z-50"
-      style={{ bottom: keyboardHeight + 8 }}
-      initial={{ y: '100%', opacity: 0 }}
-      animate={isVisible ? { y: 0, opacity: 1 } : { y: '100%', opacity: 0 }}
-      transition={
-        prefersReducedMotion 
-          ? { duration: 0.01 } 
-          : { duration: 0.15, ease: 'easeOut' }
-      }
-      aria-hidden={!isVisible}
+    <motion.div 
+      className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide pb-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
     >
-      <div 
-        className="py-3 px-4 overflow-x-auto whitespace-nowrap scrollbar-hide"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-        role="group"
-        aria-label="Example queries"
-      >
-        <div className="inline-flex gap-2">
-          {examples.map((example, index) => (
-            <AssistChip
-              key={example.label}
-              icon={example.icon}
-              label={example.label}
-              onClick={() => onSelectExample(example.text)}
-              index={index}
-              aria-label={`Use example: ${example.label}`}
-            />
-          ))}
-        </div>
-      </div>
+      {examples.map((example, index) => (
+        <motion.div
+          key={example.label}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.15 + index * 0.05 }}
+        >
+          <AssistChip
+            label={example.label}
+            query={example.query}
+            agents={example.agents}
+            onClick={onSelectExample}
+          />
+        </motion.div>
+      ))}
     </motion.div>
   );
 }

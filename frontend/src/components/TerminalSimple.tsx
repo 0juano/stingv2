@@ -304,7 +304,7 @@ export default function TerminalSimple() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={isMobile ? {} : styles.container} className="container">
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap');
@@ -357,8 +357,16 @@ export default function TerminalSimple() {
           @media (max-width: 768px) {
             .container {
               padding: 0 !important;
+              margin: 0 !important;
               width: 100vw !important;
+              height: 100vh !important;
               overflow-x: hidden !important;
+              background-color: #0a0a0a !important;
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              right: 0 !important;
+              bottom: 0 !important;
             }
             
             .terminal {
@@ -673,7 +681,7 @@ export default function TerminalSimple() {
                   delay: 0.05
                 }}
               >
-                <div style={{ transform: 'scale(1.2)' }}>
+                <div style={{ width: '100%', height: '100%', padding: '1rem' }}>
                   <FlowDiagramSimple flow={currentFlow} />
                 </div>
               </motion.div>

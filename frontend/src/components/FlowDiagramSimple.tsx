@@ -27,7 +27,8 @@ const styles = {
     boxSizing: 'border-box' as const,
     display: 'flex',
     flexDirection: 'column' as const,
-    justifyContent: 'space-between',  // Distribute space evenly
+    justifyContent: 'flex-start',  // Changed from space-between to keep content tight
+    gap: '0.5rem',  // Add small gap between sections
   },
   agentBox: {
     border: '2px solid #444',
@@ -200,14 +201,16 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
       {/* Status Messages - Show all accumulated messages */}
       {processingMessages.length > 0 && (
         <div style={{ 
-          marginTop: '1rem', 
+          marginTop: '0.5rem',  // Reduced from 1rem to bring text closer
           display: 'flex', 
           flexDirection: 'column', 
           gap: '0.25rem',
           flex: 1,  // Take remaining space
-          maxHeight: '200px',  // Increased from 120px
+          maxHeight: '150px',  // Slightly reduced to keep compact
           overflow: 'auto',
           width: '100%',
+          maxWidth: '320px',  // Prevent text from stretching too wide
+          margin: '0 auto',  // Center the messages
           boxSizing: 'border-box'
         }}>
           {processingMessages.map((message, index) => (
@@ -216,7 +219,8 @@ export default function FlowDiagramSimple({ flow }: FlowProps) {
               style={{ 
                 textAlign: 'center', 
                 color: index === processingMessages.length - 1 ? '#ff6b35' : '#999', 
-                fontSize: '0.875rem',
+                fontSize: '0.75rem',  // Slightly smaller text for mobile
+                lineHeight: '1.2',  // Tighter line height
                 wordWrap: 'break-word',
                 whiteSpace: 'pre-wrap',
                 padding: '0 0.5rem'
