@@ -102,6 +102,26 @@ export function useOrchestrator() {
           confidence: routing.confidence
         });
         
+        // Check if it's an API key error
+        if (routing.reason && routing.reason.toLowerCase().includes('api key')) {
+          console.error('🚨🚨🚨 API KEY ERROR DETECTED! 🚨🚨🚨');
+          console.error('The OpenRouter API key is invalid or has been blocked!');
+          console.error('Reason from server:', routing.reason);
+          console.error('To fix this:');
+          console.error('1. Go to https://openrouter.ai/keys');
+          console.error('2. Create a new API key with a credit limit');
+          console.error('3. Update the OPENROUTER_API_KEY in .env file');
+          console.error('4. Run: docker-compose restart');
+          console.error('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨');
+          
+          return {
+            success: false,
+            response: `❌ ERROR: API Key inválida o bloqueada. Revisa la consola para instrucciones.`,
+            totalCost: routeResponse.data.cost || 0,
+            duration
+          };
+        }
+        
         return {
           success: false,
           response: `❌ ${getOutOfScope()}`,
@@ -314,6 +334,16 @@ export function useOrchestrator() {
       if (err.response?.status === 401) {
         errorMessage = 'Error de autenticación. Verifica la API key de OpenRouter.';
         debugHint = '🔑 Check OPENROUTER_API_KEY in .env file';
+        
+        // ALERT: API KEY ISSUE!
+        console.error('🚨🚨🚨 API KEY ERROR DETECTED! 🚨🚨🚨');
+        console.error('The OpenRouter API key is invalid or has been blocked!');
+        console.error('To fix this:');
+        console.error('1. Go to https://openrouter.ai/keys');
+        console.error('2. Create a new API key with a credit limit');
+        console.error('3. Update the OPENROUTER_API_KEY in .env file');
+        console.error('4. Run: docker-compose restart');
+        console.error('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨');
       } else if (err.code === 'ERR_NETWORK') {
         errorMessage = 'Error de conexión. Verifica que los servicios estén activos.';
         debugHint = `🌐 Failed to connect to: ${err.config?.url}`;
