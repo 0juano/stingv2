@@ -11,13 +11,17 @@ import {
   getOutOfScope 
 } from '../utils/bureaucratMessages';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+// Detect if we're in production based on the current URL
+const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+const baseHost = isProduction ? `http://${window.location.hostname}` : 'http://localhost';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `${baseHost}:8001`;
 
 // For production (Render), we'll use full URLs. For local dev, construct from ports.
 const agentUrls = {
-  bcra: import.meta.env.VITE_BCRA_URL || `http://localhost:8002`,
-  comex: import.meta.env.VITE_COMEX_URL || `http://localhost:8003`,
-  senasa: import.meta.env.VITE_SENASA_URL || `http://localhost:8004`
+  bcra: import.meta.env.VITE_BCRA_URL || `${baseHost}:8002`,
+  comex: import.meta.env.VITE_COMEX_URL || `${baseHost}:8003`,
+  senasa: import.meta.env.VITE_SENASA_URL || `${baseHost}:8004`
 };
 
 interface FlowUpdate {
@@ -173,7 +177,7 @@ export function useOrchestrator() {
       });
 
       let auditResponse;
-      const auditorUrl = import.meta.env.VITE_AUDITOR_URL || 'http://localhost:8005';
+      const auditorUrl = import.meta.env.VITE_AUDITOR_URL || `${baseHost}:8005`;
       
       if (agents.length > 1) {
         // Multi-agent audit
