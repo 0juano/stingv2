@@ -181,6 +181,10 @@
   },
   "active": "e8a1396bc83b1fd0",
   "lastOpenFiles": [
+    "deploy-secure.sh",
+    "deploy.sh",
+    "UPDATE_REMOTE_SERVER.md",
+    "OPENROUTER_BEST_PRACTICES.md",
     "FIX_REMOTE_SERVER.md",
     "test-openrouter-direct.py",
     "test-router-detailed.py",
@@ -191,7 +195,6 @@
     "tests/test_search_content.py",
     "tests/test_notebook_tariff_improved.py",
     "tests/test_direct_multi.py",
-    "tests/test_all_agents_search.py",
     "docs/manual-deploy-steps.md",
     "docs/QUICK_DEPLOY_GUIDE.md",
     "docs/DIGITALOCEAN_DEPLOY_STEPS.md",
@@ -216,9 +219,6 @@
     "project-overview-for-chatgpt.md",
     "docs/test_queries.md",
     "docs/confidence_implementation.md",
-    "docs/bureaucracy_oracle_complete_logic.md",
-    "docs/agent_prompts_reference.md",
-    "docs/SEARCH_INTEGRATION_SUMMARY.md",
     "frontend/dist/vite.svg",
     "frontend/src/assets/react.svg",
     "frontend/public/vite.svg"
