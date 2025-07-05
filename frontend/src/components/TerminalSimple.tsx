@@ -188,6 +188,13 @@ export default function TerminalSimple() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.group('🎯 [UI] Form Submission');
+    console.log('📝 Input:', input);
+    console.log('🔄 Processing:', isProcessing);
+    console.log('📱 Mobile mode:', isMobile);
+    console.groupEnd();
+    
     if (!input.trim() || isProcessing) return;
 
     const userMessage: Message = {
@@ -197,13 +204,16 @@ export default function TerminalSimple() {
       timestamp: new Date(),
     };
 
+    console.log('💬 [UI] Adding user message:', userMessage);
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsProcessing(true);
     
     try {
+      console.log('🔮 [UI] Showing flow diagram');
       setShowFlow(true);
       const result = await processQuery(input, (flow) => {
+        console.log('🔄 [UI] Flow update:', flow.currentStep);
         setCurrentFlow(flow);
         
         // Processing logs removed for simplified UI
@@ -219,10 +229,19 @@ export default function TerminalSimple() {
         duration: result.duration,
       };
 
+      console.log('✅ [UI] Query successful:', {
+        success: result.success,
+        duration: result.duration,
+        cost: result.totalCost,
+        responseLength: result.response.length
+      });
+
       setMessages(prev => [...prev, responseMessage]);
       // Hide flow diagram immediately when response arrives
       setShowFlow(false);
     } catch (error: any) {
+      console.error('❌ [UI] Query failed:', error);
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'system',
@@ -231,6 +250,7 @@ export default function TerminalSimple() {
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
+      console.log('🏁 [UI] Resetting UI state');
       setIsProcessing(false);
       setCurrentFlow({ currentStep: 'idle' });
       // Keep flow hidden after processing

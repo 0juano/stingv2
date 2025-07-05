@@ -40,9 +40,18 @@ export function useOrchestrator() {
     question: string,
     onFlowUpdate?: (flow: FlowUpdate) => void
   ) => {
-    console.log('[useOrchestrator] Starting processQuery with question:', question);
-    console.log('[useOrchestrator] API_BASE_URL:', API_BASE_URL);
-    console.log('[useOrchestrator] Agent URLs:', agentUrls);
+    // Enhanced logging with console group
+    console.group('🚀 [useOrchestrator] New Query Request');
+    console.log('📝 Question:', question);
+    console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'LOCAL');
+    console.log('🏠 Base Host:', baseHost);
+    console.log('🔗 API URLs:', {
+      router: API_BASE_URL,
+      auditor: `${baseHost}:8005`,
+      agents: agentUrls
+    });
+    console.log('⏰ Started at:', new Date().toISOString());
+    console.groupEnd();
     
     setIsLoading(true);
     setError(null);
@@ -51,11 +60,18 @@ export function useOrchestrator() {
 
     try {
       // Step 1: Route the query
-      console.log('[useOrchestrator] Step 1: Routing query to:', `${API_BASE_URL}/route`);
+      console.group('📍 Step 1: Routing Query');
+      console.log('🎯 Target URL:', `${API_BASE_URL}/route`);
+      console.log('📤 Request payload:', { question });
+      const routeStartTime = Date.now();
+      
       onFlowUpdate?.({ currentStep: 'router', processing: getAnalyzingQuery() });
       
       const routeResponse = await axios.post(`${API_BASE_URL}/route`, { question }, { timeout: 10000 });
-      console.log('[useOrchestrator] Route response:', routeResponse.data);
+      
+      console.log('✅ Route response received in', Date.now() - routeStartTime, 'ms');
+      console.log('📥 Response data:', routeResponse.data);
+      console.groupEnd();
       const routing = routeResponse.data.decision;
       
       // Handle both old and new routing formats
@@ -78,8 +94,13 @@ export function useOrchestrator() {
       // If out of scope, return early
       if (!agents.length || primaryAgent === 'out_of_scope') {
         const duration = (Date.now() - startTime) / 1000; // Duration in seconds
-        console.log('[useOrchestrator] Query is out of scope. Returning early.');
-        console.log('[useOrchestrator] Agents:', agents, 'Primary agent:', primaryAgent);
+        console.warn('⚠️ Query is out of scope!');
+        console.log('📊 Decision details:', {
+          agents: agents,
+          primaryAgent: primaryAgent,
+          reason: routing.reason,
+          confidence: routing.confidence
+        });
         
         return {
           success: false,
@@ -104,10 +125,13 @@ export function useOrchestrator() {
           stepData: { agentCount: agents.length, agents }
         });
         
-        console.log('[useOrchestrator] Making parallel calls to agents:', agents);
+        console.group('📡 Step 2: Calling Multiple Agents');
+        console.log('🎯 Agents to call:', agents);
+        
         const agentPromises = agents.map(async (agent: string) => {
           const agentUrl = agentUrls[agent as keyof typeof agentUrls];
-          console.log(`[useOrchestrator] Calling ${agent} at: ${agentUrl}/answer`);
+          const agentStartTime = Date.now();
+          console.log(`🔄 Calling ${agent.toUpperCase()} at: ${agentUrl}/answer`);
           
           try {
             const response = await axios.post(
@@ -115,10 +139,14 @@ export function useOrchestrator() {
               { question },
               { timeout: 35000 } // 35 seconds timeout for agents
             );
-            console.log(`[useOrchestrator] ${agent} response received:`, response.data);
+            console.log(`✅ ${agent.toUpperCase()} responded in ${Date.now() - agentStartTime}ms`);
             return { agent, response: response.data };
-          } catch (error) {
-            console.error(`[useOrchestrator] Error calling ${agent}:`, error);
+          } catch (error: any) {
+            console.error(`❌ ${agent.toUpperCase()} failed after ${Date.now() - agentStartTime}ms:`, {
+              message: error.message,
+              code: error.code,
+              response: error.response?.data
+            });
             return { agent, response: { answer: { error: `Failed to contact ${agent}` }, cost: 0 } };
           }
         });
@@ -128,6 +156,9 @@ export function useOrchestrator() {
           agentResponses[agent] = response;
           totalAgentCost += response.cost || 0;
         });
+        
+        console.log('📊 All agents completed. Total cost:', totalAgentCost);
+        console.groupEnd();
         
         // Add completion notification for multi-agent flow
         onFlowUpdate?.({ 
@@ -228,6 +259,14 @@ export function useOrchestrator() {
       
       const duration = (Date.now() - startTime) / 1000; // Duration in seconds
 
+      // Summary logging
+      console.group('✅ Query Completed Successfully');
+      console.log('⏱️ Total duration:', duration.toFixed(2), 'seconds');
+      console.log('💰 Total cost: $', totalCost.toFixed(6));
+      console.log('🤖 Agents consulted:', agents);
+      console.log('📝 Response length:', formatResponse.data.markdown.length, 'characters');
+      console.groupEnd();
+
       return {
         success: true,
         response: formatResponse.data.markdown,
@@ -242,19 +281,27 @@ export function useOrchestrator() {
       };
 
     } catch (err: any) {
-      console.error('[useOrchestrator] Orchestrator error:', err);
-      console.error('[useOrchestrator] Error type:', err.name);
-      console.error('[useOrchestrator] Error message:', err.message);
-      console.error('[useOrchestrator] Error stack:', err.stack);
+      console.group('❌ Query Failed with Error');
+      console.error('🔴 Error type:', err.name);
+      console.error('🔴 Error message:', err.message);
+      console.error('🔴 Error code:', err.code);
       
       if (err.response) {
-        console.error('[useOrchestrator] API Error Response:', {
+        console.error('🌐 API Error Details:', {
           status: err.response.status,
           statusText: err.response.statusText,
           data: err.response.data,
-          headers: err.response.headers
+          headers: err.response.headers,
+          config: {
+            url: err.response.config?.url,
+            method: err.response.config?.method,
+            data: err.response.config?.data
+          }
         });
       }
+      
+      console.error('📍 Stack trace:', err.stack);
+      console.groupEnd();
       
       setError(err.message || 'Error processing query');
       
@@ -262,12 +309,24 @@ export function useOrchestrator() {
       
       // Provide more specific error messages
       let errorMessage = 'No se pudo procesar la consulta.';
+      let debugHint = '';
+      
       if (err.response?.status === 401) {
         errorMessage = 'Error de autenticación. Verifica la API key de OpenRouter.';
+        debugHint = '🔑 Check OPENROUTER_API_KEY in .env file';
       } else if (err.code === 'ERR_NETWORK') {
         errorMessage = 'Error de conexión. Verifica que los servicios estén activos.';
+        debugHint = `🌐 Failed to connect to: ${err.config?.url}`;
       } else if (err.response?.status >= 500) {
         errorMessage = 'Error del servidor. Intenta nuevamente.';
+        debugHint = '🔥 Server error - check backend logs';
+      } else if (err.code === 'ECONNABORTED') {
+        errorMessage = 'Timeout - La solicitud tardó demasiado.';
+        debugHint = '⏱️ Request timed out after ' + (err.config?.timeout / 1000) + ' seconds';
+      }
+      
+      if (debugHint) {
+        console.log('💡 Debug hint:', debugHint);
       }
       
       return {
@@ -277,7 +336,7 @@ export function useOrchestrator() {
         duration
       };
     } finally {
-      console.log('[useOrchestrator] Process complete. Setting loading to false.');
+      console.log('🏁 Query processing finished. Duration:', ((Date.now() - startTime) / 1000).toFixed(2), 'seconds');
       setIsLoading(false);
     }
   };
