@@ -370,6 +370,88 @@ kanban-plugin: board
 
 ## 🧪 Testing/Review
 
+- [ ] **Fix light mode display** - UI elements look wrong/unreadable in light mode
+  
+  **Problem Statement**
+  - App designed only for dark mode (black background #0a0a0a)
+  - Orange text (#ff6b35) becomes unreadable on light backgrounds
+  - No theme detection or switching capability
+  - Hardcoded colors throughout components
+  
+  **Technical Analysis**
+  - Colors hardcoded in TerminalSimple.tsx styles (lines 381-634)
+  - Background: #0a0a0a, Text: #fff, Accent: #ff6b35
+  - No CSS variables or theme system
+  - Tailwind classes assume dark background
+  
+  **Solution Approach**
+  1. Create CSS variables for all colors
+  2. Implement theme detection using prefers-color-scheme
+  3. Create light theme color palette
+  4. Update all hardcoded colors to use variables
+  5. Test every component in both themes
+  
+  **Implementation Steps**
+  ```css
+  /* Add to index.css */
+  :root {
+    /* Dark theme (default) */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --accent: #ff6b35;
+    --border: #333333;
+  }
+  
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #0a0a0a;
+      --text-secondary: #333333;
+      --accent: #ff4500; /* Darker orange for contrast */
+      --border: #dddddd;
+    }
+  }
+  ```
+  
+  **Components to Update**
+  - TerminalSimple.tsx (main container and mobile styles)
+  - QuestionScreen.tsx (input field and buttons)
+  - ExampleGrid.tsx (example buttons)
+  - FlowDiagramSimple.tsx (processing screen)
+  - All inline styles using color values
+  
+  **Testing Requirements**
+  - Toggle OS theme settings (macOS, iOS, Android)
+  - Check contrast ratios (WCAG AA compliance)
+  - Test all interactive states (hover, focus, active)
+  - Verify markdown rendering in light mode
+  - Check example buttons visibility
+  
+  **Deployment Process**
+  ```bash
+  # Same as copy button fix
+  cd /opt/proyecto-sting
+  docker build -t proyecto-sting_frontend \
+    --build-arg VITE_API_BASE_URL=http://147.182.248.187:8001 \
+    --no-cache ./frontend
+  docker-compose up -d frontend
+  ```
+  
+  **Success Criteria**
+  - App automatically adapts to system theme
+  - All text readable in both themes (contrast ratio ≥ 4.5:1)
+  - No hardcoded colors remain
+  - Smooth theme transitions
+  - Orange accent visible in both themes
+  
+  **Risks & Mitigation**
+  - Risk: Breaking existing dark theme design
+  - Mitigation: Implement incrementally, test thoroughly
+  - Risk: Performance impact from CSS variables
+  - Mitigation: Modern browsers handle this efficiently
 
 
 ## ✅ Done
