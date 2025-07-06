@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "4482eafbc380dce1",
+        "id": "e033c3dca2046864",
         "type": "tabs",
         "children": [
           {
-            "id": "e8a1396bc83b1fd0",
+            "id": "10868433804710c8",
             "type": "leaf",
             "state": {
               "type": "kanban",
@@ -18,11 +18,12 @@
                   "kanban-plugin": "board",
                   "list-collapse": [
                     false,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
                   ]
                 }
               },
@@ -179,8 +180,9 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "e8a1396bc83b1fd0",
+  "active": "10868433804710c8",
   "lastOpenFiles": [
+    "project-kanban.md",
     "quick-deploy.sh",
     "docs/DOMAIN_SETUP_GUIDE.md",
     "deploy.sh",
@@ -195,7 +197,6 @@
     "frontend/MOBILE_LAYOUT_VERIFICATION.md",
     "frontend/FRONTEND_CODE_AUDIT.md",
     "deploy-secure.sh",
-    "tests/test_two_tier_search.py",
     "docs/manual-deploy-steps.md",
     "docs/QUICK_DEPLOY_GUIDE.md",
     "docs/DIGITALOCEAN_DEPLOY_STEPS.md",
