@@ -182,6 +182,7 @@
   },
   "active": "10868433804710c8",
   "lastOpenFiles": [
+    "ARCHITECTURE_RECOMMENDATIONS.md",
     "frontend/dist/assets/index-C4sYA7UZ.js",
     "frontend/dist/assets/index-BtLgLoHC.css",
     "frontend/dist/assets/index-DNAh1UH6.js",
@@ -195,7 +196,6 @@
     "frontend/src/components/SuggestionBar.tsx",
     "frontend/src/components/QuestionScreen.tsx",
     "frontend/src/components/ExampleGrid.tsx",
-    "frontend/src/components/AssistChip.tsx",
     "frontend/MOBILE_LAYOUT_VERIFICATION.md",
     "frontend/FRONTEND_CODE_AUDIT.md",
     "docs/manual-deploy-steps.md",
